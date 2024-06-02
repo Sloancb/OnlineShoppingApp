@@ -1,18 +1,20 @@
+import React from 'react';
 import './App.css';
-import Login from './Login';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Home from './pages/Home.tsx'
+import Login from './pages/Login.tsx'
+import NotFoundPage from './pages/404.tsx'
 
 function App() {
   return (
-    <div className="App">
-      <header >
-        <p>
-          This is the start of an app
-          On branch develop
-        </p>
-        <Login/>
-      </header>
-    </div>
-  );
+      <BrowserRouter>
+        <Routes>
+          <Route path="/home" element={<Home/>}/>
+          <Route exact path="/" element={<Login/>}/>
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </BrowserRouter>
+  )
 }
 
 export default App;

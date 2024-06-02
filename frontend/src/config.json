@@ -1,0 +1,5 @@
+{
+    "backendUrl": "http://10.3.128.151:3000",
+    "apiKey": "your-api-key",
+    "header": "your-header"
+}
