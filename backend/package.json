@@ -1,0 +1,21 @@
+{
+    "name": "online-shopping-backend",
+    "version": "1.0.0",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js",
+        "dev": "nodemon server.js"
+    },
+    "dependencies": {
+        "bcryptjs": "^2.4.3",
+        "body-parser": "^1.19.0",
+        "dotenv": "^8.2.0",
+        "express": "^4.19.2",
+        "jsonwebtoken": "^8.5.1",
+        "pg": "^8.6.0",
+        "sequelize": "^6.6.5"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.7"
+    }
+}

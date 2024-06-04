@@ -1,5 +1,11 @@
 {
-    "backendUrl": "http://10.3.128.151:3000",
+    "backendUrl": "http://localhost:5000",
     "apiKey": "your-api-key",
-    "header": "your-header"
+    "header": "your-header",
+    "endpoint" : {
+        "customers": "/api/customers",
+        "products": "/api/products",
+        "orders": "/api/orders",
+        "staff": "/api/staff"
+    }
 }
