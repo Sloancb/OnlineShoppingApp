@@ -27,7 +27,10 @@ const Home: React.FC = () => {
       request<Product>(config.endpoint.products +'/', 'POST', updatedRow)
       .then((response) => {
           console.log("product saved", response)
-          // setLoading(false);
+          request<Product[]>(config.endpoint.products + '/', 'GET')
+          .then((response) => {
+            setData(response);
+          });
       })
       .catch((error) => {
           console.log("error", error);
@@ -35,7 +38,6 @@ const Home: React.FC = () => {
       });
       console.log(data)
       console.log(updatedRow)
-      setData([updatedRow, ...data]);
     };
     return (
         <div >

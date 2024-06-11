@@ -3,24 +3,20 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 exports.register = async (req, res) => {
-    console.log("req", req.body)
     const { name, email, password } = req.body;
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         const customer = await Customer.create({ name, email, password:hashedPassword });
         res.status(201).json(customer);
     } catch (error) {
-        console.log(error)
         res.status(500).json({ error: error.message });
     }
 };
 
 exports.login = async (req, res) => {
     const { email, password } = req.body;
-    console.log(req.body)
     try {
         const customer = await Customer.findOne({where : {email : email}})
-        console.log(customer.dataValues)
         if (!customer) {
             return res.status(404).json({ error: 'Customer not found' });
         } 

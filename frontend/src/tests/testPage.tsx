@@ -41,7 +41,7 @@ const TestPage: React.FC = () => {
 
     const handleCustomerFetchAll = () => {
         setLoading(true);
-        request('/fetchAll','GET')
+        request(config.endpoint.customers + '/fetchAll','GET')
             .then((response) => {
                 // handle successful login
                 console.log("response", response)
@@ -55,7 +55,7 @@ const TestPage: React.FC = () => {
     };
     const handleCustomerDeleteAll = () => {
         setLoading(true);
-        request('/deleteAll','DELETE')
+        request(config.endpoint.customers+'/deleteAll','DELETE')
             .then((response) => {
                 // handle successful login
                 console.log("response", response)
