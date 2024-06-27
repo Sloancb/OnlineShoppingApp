@@ -8,12 +8,14 @@ import TestPage from './tests/testPage.tsx'
 
 function App() {
   return (
-      <BrowserRouter>
+      <BrowserRouter
+        // basename={"frontend"}
+      >
         <Routes>
           <Route path="/home" element={<Home/>}/>
           <Route path="/test" element={<TestPage/>}/>
           <Route exact path="/" element={<Login/>}/>
-          <Route path="*" element={<NotFoundPage />} />
+          <Route path="/*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
   )

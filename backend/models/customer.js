@@ -17,6 +17,8 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DECIMAL,
             defaultValue: 0
         }
+        //TODO: add credit card information
+        //TODO: add address information
     });
 
     return Customer;
