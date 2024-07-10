@@ -1,4 +1,4 @@
-const Sequelize = require('sequelize');
+const Sequelize = require('@sequelize/core');
 const sequelize = require('../config/database');
 
 const Customer = require('./customer')(sequelize, Sequelize);
