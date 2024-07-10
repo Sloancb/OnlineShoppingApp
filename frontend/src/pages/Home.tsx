@@ -3,7 +3,8 @@ import { request } from '../API/Requests.ts';
 import config from '../config.json';
 import { Box } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import SearchAppBar, { Product } from '../styling/components.tsx'
+import SearchAppBar, { EnsureLoggedIn, Product } from '../styling/components.tsx'
+import HomeBar from '../styling/components.tsx';
 
 
 const columns: GridColDef<Product>[] = [
@@ -41,28 +42,33 @@ const Home: React.FC = () => {
     };
     return (
         <div >
+          <EnsureLoggedIn>
+            
+          <HomeBar>
             <div className="sidebar">
-                <SearchAppBar/>
+                {/* <SearchAppBar/> */}
             </div>
             <div className="content">
-            <Box sx={{ padding:5, maxHeight: 10}}>
-                <DataGrid
-                    rows={data}
-                    columns={columns}
-                    initialState={{
-                    // pagination: {
-                    //     paginationModel: {
-                    //     pageSize: 5,
-                    //     },
-                    // },
-                    }}
-                    pageSizeOptions={[5]}
-                    processRowUpdate={handleProcessRowUpdate}
-                    checkboxSelection
-                    disableRowSelectionOnClick
-                />
+              <Box sx={{ padding:5, maxHeight: 10}}>
+                  <DataGrid
+                      rows={data}
+                      columns={columns}
+                      initialState={{
+                      // pagination: {
+                      //     paginationModel: {
+                      //     pageSize: 5,
+                      //     },
+                      // },
+                      }}
+                      pageSizeOptions={[5]}
+                      processRowUpdate={handleProcessRowUpdate}
+                      checkboxSelection
+                      disableRowSelectionOnClick
+                  />
                 </Box>
             </div>
+            </HomeBar>
+            </EnsureLoggedIn>
         </div>
     );
 };

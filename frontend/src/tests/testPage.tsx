@@ -4,7 +4,7 @@ import config from '../config.json';
 import { request } from '../API/Requests.ts';
 import { CircularProgress } from '@mui/material';
 import { testProducts } from './testData.ts';
-import { Product } from '../styling/components.tsx';
+import HomeBar, { Product } from '../styling/components.tsx';
 
 const TestPage: React.FC = () => {
     const [loading, setLoading] = useState(false)
@@ -12,16 +12,16 @@ const TestPage: React.FC = () => {
         console.log("handlePostProduct");
         setLoading(true);
         for (let prod of testProducts){
-        request<Product>(config.endpoint.products +'/', 'POST', prod)
-            .then((response) => {
-                console.log("product saved", response)
-                setLoading(false);
-            })
-            .catch((error) => {
-                // handle login error
-                console.log("error", error);
-                setLoading(false);
-            });
+            request<Product>(config.endpoint.products +'/', 'POST', prod)
+                .then((response) => {
+                    console.log("product saved", response)
+                    setLoading(false);
+                })
+                .catch((error) => {
+                    // handle login error
+                    console.log("error", error);
+                    setLoading(false);
+                });
         }
     }
     const handDeleteAllProduct = () => {
@@ -70,6 +70,7 @@ const TestPage: React.FC = () => {
 
     return (
         <div>
+            <HomeBar>
             <div style= {{display:"dflex"}}>
                 <h1>Test Page</h1>
             </div>
@@ -84,6 +85,14 @@ const TestPage: React.FC = () => {
                 <button onClick={handlePostProduct}>handlePostProduct</button>
                 <button onClick={handDeleteAllProduct}>handDeleteAllProduct</button>
             </div>
+            <br/>
+            <div style= {{display:"dflex"}}>
+                <button onClick={()=>{
+                    localStorage.clear()
+                    console.log("Storage Cleared")
+                }}>Clear LocalStorage</button>
+            </div>
+            </HomeBar>
         </div>
     );
 };

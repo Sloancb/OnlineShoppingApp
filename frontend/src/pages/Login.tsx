@@ -4,7 +4,7 @@ import config from '../config.json';
 import { useNavigate } from "react-router-dom";
 import { Alert, Button, Card, CardContent, CircularProgress, Paper, TextField, styled } from '@mui/material';
 import { error } from '../styling/components.tsx';
-// import {Paper} from '../styling/components.tsx';
+
 function Login() {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
@@ -15,10 +15,15 @@ function Login() {
     const handleLogin = () => {
         setLoading(true);
         request(config.endpoint.customers + '/login', 'POST', { email, password })
-            .then((response) => {
+            .then((data) => {
+                if(data != null){
+                    localStorage.setItem("jwt", JSON.stringify(data["token"]))
+                    navigate('/') //not needed bc router is changed
+                }
+                else {
+                    console.log("data is null")
+                }
                 setLoading(false);
-                if(response !== undefined)
-                    navigate('/home');
             })
             .catch((error) => {
                 // handle login error

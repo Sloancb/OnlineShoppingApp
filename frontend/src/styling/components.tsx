@@ -7,6 +7,7 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
+import { useNavigate } from 'react-router-dom';
 
 
 // Home bar
@@ -52,8 +53,9 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export default function SearchAppBar() {
+export default function HomeBar({children}) {
   return (
+    <div>
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar>
@@ -77,6 +79,8 @@ export default function SearchAppBar() {
         </Toolbar>
       </AppBar>
     </Box>
+    {children}
+    </div>
   );
 }
 
@@ -88,6 +92,19 @@ export const Paper = styled(basePaper)(({ theme }) => ({
     textAlign: 'center', 
   }));
 
+
+// handle Login
+export const EnsureLoggedIn = ({children}) =>{
+  const jwt = localStorage.getItem("jwt")
+  const navigate = useNavigate();
+  if(jwt){
+    return <div>
+      {children}
+    </div>
+  } else {
+    navigate('/Login')
+  }
+}
 // interfaces
 export interface error {
     isError: boolean,
@@ -103,3 +120,4 @@ export interface Product {
   description: string,
   price: number
 }
+
