@@ -31,6 +31,14 @@ exports.login = async (req, res) => {
     }
 };
 
+exports.editcustomer = async (req, res) => {
+    try{
+
+    }catch(error){
+
+    }
+}
+
 exports.fetchAll = async (req, res) => {
     try {
         const customer = await Customer.findAll()
