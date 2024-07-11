@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from "react-router-dom";
-import { Alert, Button, Card, CardContent, CircularProgress, Paper, TextField, Typography, styled } from '@mui/material';
-import { HandleMessages, error } from '../styling/components.tsx';
-import { getLogin, postCustomer } from '../API/customerAPI.ts';
-import Person from '@mui/icons-material/Person';
+import {  useNavigate } from "react-router-dom";
+import { Button, CircularProgress, Paper, TextField, } from '@mui/material';
+import { postCustomer } from '../API/customerAPI.ts';
 
 function RegisterPage() {
     const navigate = useNavigate();
@@ -12,7 +10,6 @@ function RegisterPage() {
     const [password, setPassword] = useState('');
 
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<error>({isError : false, message:""});
     const handleRegister = ()=>{
         setLoading(true)
         postCustomer({email, name, password})

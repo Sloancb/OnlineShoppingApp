@@ -3,7 +3,7 @@ import { request } from '../API/Requests.ts';
 import config from '../config.json';
 import { Box } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import SearchAppBar, { EnsureLoggedIn, HandleMessages, Product } from '../styling/components.tsx'
+import { EnsureLoggedIn, Product } from '../styling/components.tsx'
 import HomeBar from '../styling/components.tsx';
 
 

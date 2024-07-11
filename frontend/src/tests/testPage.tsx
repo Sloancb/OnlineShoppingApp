@@ -4,7 +4,7 @@ import config from '../config.json';
 import { request } from '../API/Requests.ts';
 import { CircularProgress } from '@mui/material';
 import { testProducts } from './testData.ts';
-import HomeBar, { HandleMessages, Product } from '../styling/components.tsx';
+import HomeBar, { sendMessage, Product } from '../styling/components.tsx';
 
 const TestPage: React.FC = () => {
     const [loading, setLoading] = useState(false)
@@ -67,10 +67,9 @@ const TestPage: React.FC = () => {
                 setLoading(false);
             });
     };
-
+   
     return (
         <div>
-            <HandleMessages>
             <HomeBar>
             <div style= {{display:"dflex"}}>
                 <h1>Test Page</h1>
@@ -97,8 +96,14 @@ const TestPage: React.FC = () => {
                     console.log("session Storage Cleared")
                 }}>Clear sessionStorage</button>
             </div>
+            <br/>
+            <div style= {{display:"dflex"}}>
+                <button onClick={()=>{sendMessage("error", "Test error message") }}>send error message</button>
+                <button onClick={()=>{sendMessage('success', "Test success message")}}>send success message</button>
+                <button onClick={()=>{sendMessage('info', "Test info message")}}>send info message</button>
+                <button onClick={()=>{sendMessage('warning', "Test warning message")}}>send warning message</button>
+            </div>
             </HomeBar>
-            </HandleMessages>
         </div>
     );
 };

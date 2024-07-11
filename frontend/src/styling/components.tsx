@@ -3,14 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import * as React from 'react';
 //MaterialUI
-import { Alert, Button, Card, CardContent, CircularProgress, Menu, MenuItem, Snackbar, TextField, Paper as basePaper } from '@mui/material';
-import { styled, alpha } from '@mui/material/styles';
+import { Alert, Menu, MenuItem, Snackbar,  Paper as basePaper } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import InputBase from '@mui/material/InputBase';
 import Badge from '@mui/material/Badge';
 import Grid from '@mui/material/Grid';
 //Icons
@@ -104,22 +101,33 @@ export interface message{
   type: "success" | "info" | "warning" | "error",
   message: string
 }
-export const HandleMessages = ({children}) =>{
+export const sendMessage = (type : "success" | "info" | "warning" | "error", message:string) => {
+  let messageObj : message = {exists: true, type:type, message:message}
+  window.sessionStorage.setItem('msg', JSON.stringify(messageObj))
+  window.dispatchEvent(new Event("storage"));
+};
+
+export const HandleMessages = ({children}:any) =>{
   const nullMessage : message= {exists:false, type:"error", message: ""}
   const [message, setMessage] = useState<message>(nullMessage)
 
   const handleClose = (event: React.SyntheticEvent | Event, reason?: string) =>{
-    sessionStorage.removeItem('msg')
     if (reason === 'clickaway') {
       return;
     }
-    setMessage(nullMessage)
+    setMessage({...message, exists:false}) //The alert will switch before the snackbar leaves the page. So we must leave the the type consistent so the alert doesn't refresh
+    sessionStorage.removeItem('msg')
   }
-  const msgStr = sessionStorage.getItem('msg')
-  if(msgStr && !message.exists) {
-    let msg : message = JSON.parse(msgStr)
-    setMessage(msg)
-  } 
+  //TODO: add a level messages system
+  window.onstorage = (ev) => {
+    console.log("storage listener activated")
+    let msgStr = sessionStorage.getItem('msg')
+    if(msgStr) {
+      let msg : message = JSON.parse(msgStr)
+      console.log("message",msgStr )
+      setMessage(msg)
+    } 
+  }
   return (
     <div>
       {children}
@@ -141,11 +149,6 @@ export const HandleMessages = ({children}) =>{
   )
 }
 // interfaces
-export interface error {
-    isError: boolean,
-    message: string
-}
-
 export interface Product {
   id : number,
   name: string,

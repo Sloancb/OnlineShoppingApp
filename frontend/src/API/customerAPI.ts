@@ -1,8 +1,7 @@
 import {request} from './Requests.ts'
 import config from '../config.json';
-import { NavigateFunction, useNavigate } from "react-router-dom";
-import RegisterPage from '../pages/RegisterPage.tsx';
-import { message } from '../styling/components.tsx';
+import { NavigateFunction } from "react-router-dom";
+import { sendMessage } from '../styling/components.tsx';
 
 export interface loginData {
     name : string, 
@@ -16,8 +15,7 @@ export async function getLogin(data : loginData){
         .then((response) => {
             if(response != null){
                 console.log("response", response)
-                let message : message = {exists: true, type:"success", message:"Login Successful"}
-                sessionStorage.setItem('msg', JSON.stringify(message))
+                sendMessage('success', "Login Successful")
                 localStorage.setItem("jwt", JSON.stringify(data["token"]))
             }
             else {
@@ -27,8 +25,7 @@ export async function getLogin(data : loginData){
         })
         .catch((errorMessage) => {
             console.log("error", errorMessage);
-            let message : message = {exists: true, type:"error", message:errorMessage}
-            sessionStorage.setItem('msg', JSON.stringify(message))
+            sendMessage('error', "Login  Failed:" + errorMessage) 
         });
     return loggedIn
 };
@@ -46,15 +43,13 @@ export async function postCustomer(data : customerData):Promise<boolean>{
         .then((response) => {
             // handle successful login
             console.log("response", response)
-            let message : message = {exists: true, type:"success", message:"Register Successful"}
-            sessionStorage.setItem('msg', JSON.stringify(message))
+            sendMessage('success', "Register Successful")
             isRegistered = true
         })
         .catch((errorMessage) => {
             // handle login error
-            console.log("error", errorMessage);
-            let message : message = {exists: true, type:"error", message:errorMessage}
-            sessionStorage.setItem('msg', JSON.stringify(message))
+            console.log("error", errorMessage);            
+            sendMessage('error', "Rigstration  Failed:" + errorMessage)
         });
     return isRegistered
 };
