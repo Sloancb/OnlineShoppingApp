@@ -16,6 +16,12 @@ module.exports = (sequelize, DataTypes) => {
         current_balance: {
             type: DataTypes.DECIMAL,
             defaultValue: 0
+        },
+        credit_card_info: {
+            type: DataTypes.STRING
+        },
+        address: {
+            type: DataTypes.STRING
         }
     });
 
