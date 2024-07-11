@@ -1,5 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 import configData from '../config.json';
+
 export async function request<T>(endpoint: string, method: string, data?: any){
     
     let returnData;

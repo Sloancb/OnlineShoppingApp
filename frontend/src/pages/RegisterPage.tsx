@@ -1,36 +1,45 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { Alert, Button, Card, CardContent, CircularProgress, Paper, TextField, Typography, styled } from '@mui/material';
 import { HandleMessages, error } from '../styling/components.tsx';
-import { getLogin } from '../API/customerAPI.ts';
+import { getLogin, postCustomer } from '../API/customerAPI.ts';
 import Person from '@mui/icons-material/Person';
 
-function LoginPage() {
+function RegisterPage() {
     const navigate = useNavigate();
+    const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
+
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<error>({isError : false, message:""});
-    const handleLogin = ()=>{
+    const handleRegister = ()=>{
         setLoading(true)
-        getLogin({name, password})
-        .then((loggedIn)=>{
+        postCustomer({email, name, password})
+        .then((isRegistered)=>{
             setLoading(false)
-            if(loggedIn)
-                navigate('/')
+            if(isRegistered)
+                navigate('/Login')
+
         })
     }
-    useEffect(()=>{
-        localStorage.clear()
-    },[])
     return (
         <div className="container">
-                <Paper className={"paper"} elevation={3} >
+                <Paper className={"paper"} elevation={3} style={{width:'10lh', textAlign:'center'}} >
                 <h1>
-                    Login
-                    {loading && <CircularProgress size={20}  style={{textAlign:"center", padding:3}}/>}
+                    Register
+                    {loading && <CircularProgress size={20}  />}
                 </h1>
-                <div style={{display:"flex"}}>
+                <div className="Form">
+                    <TextField
+                        label="Email"
+                        value={email}
+                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                            setEmail(event.target.value);
+                        }}
+                    />
+                </div>
+                <div className="Form">
                     <TextField
                         label="Username"
                         value={name}
@@ -38,22 +47,26 @@ function LoginPage() {
                             setName(event.target.value);
                         }}
                     />
+                <br/>
+                </div>
+                <div className="Form">
                     <TextField
                         label="Password"
                         type='password'
                         value={password}
                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                        setPassword(event.target.value);
+                            setPassword(event.target.value);
                         }}
                     />
-                    <Button onClick={handleLogin}>Login</Button>
                 </div>
                 <br/>
-                <Typography>Don't have an account? {<Link to={'../Register'}>Click here!</Link>}</Typography>
-                {error.isError && <Alert severity="error">{error.message}</Alert>}
+                <div>
+                    <Button onClick={()=>{navigate('/Login')}}>Cancel</Button>
+                    <Button onClick={handleRegister}>Register</Button>
+                </div>
                 </Paper>
         </div>
     );
 }
 
-export default LoginPage;
+export default RegisterPage;

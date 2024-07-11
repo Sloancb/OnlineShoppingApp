@@ -14,9 +14,9 @@ exports.register = async (req, res) => {
 };
 
 exports.login = async (req, res) => {
-    const { email, password } = req.body;
+    const { name, password } = req.body;
     try {
-        const customer = await Customer.findOne({where : {email : email}})
+        const customer = await Customer.findOne({where : {name : name}})
         if (!customer) {
             return res.status(404).json({ error: 'Customer not found' });
         } 

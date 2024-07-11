@@ -4,7 +4,7 @@ import config from '../config.json';
 import { request } from '../API/Requests.ts';
 import { CircularProgress } from '@mui/material';
 import { testProducts } from './testData.ts';
-import HomeBar, { Product } from '../styling/components.tsx';
+import HomeBar, { HandleMessages, Product } from '../styling/components.tsx';
 
 const TestPage: React.FC = () => {
     const [loading, setLoading] = useState(false)
@@ -70,6 +70,7 @@ const TestPage: React.FC = () => {
 
     return (
         <div>
+            <HandleMessages>
             <HomeBar>
             <div style= {{display:"dflex"}}>
                 <h1>Test Page</h1>
@@ -89,10 +90,15 @@ const TestPage: React.FC = () => {
             <div style= {{display:"dflex"}}>
                 <button onClick={()=>{
                     localStorage.clear()
-                    console.log("Storage Cleared")
+                    console.log("Local Storage Cleared")
                 }}>Clear LocalStorage</button>
+                <button onClick={()=>{
+                    sessionStorage.clear()
+                    console.log("session Storage Cleared")
+                }}>Clear sessionStorage</button>
             </div>
             </HomeBar>
+            </HandleMessages>
         </div>
     );
 };

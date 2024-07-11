@@ -19,7 +19,7 @@ const NotFoundPage: React.FC = () => {
                 color="primary"
                 onClick={() => {
                     // Handle button click event
-                    navigate('/home');
+                    navigate('/');
                 }}
             >
                 Go back to Home

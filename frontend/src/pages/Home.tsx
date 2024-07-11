@@ -3,7 +3,7 @@ import { request } from '../API/Requests.ts';
 import config from '../config.json';
 import { Box } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import SearchAppBar, { EnsureLoggedIn, Product } from '../styling/components.tsx'
+import SearchAppBar, { EnsureLoggedIn, HandleMessages, Product } from '../styling/components.tsx'
 import HomeBar from '../styling/components.tsx';
 
 
@@ -43,22 +43,19 @@ const Home: React.FC = () => {
     return (
         <div >
           <EnsureLoggedIn>
-            
           <HomeBar>
-            <div className="sidebar">
-                {/* <SearchAppBar/> */}
-            </div>
             <div className="content">
               <Box sx={{ padding:5, maxHeight: 10}}>
                   <DataGrid
                       rows={data}
                       columns={columns}
+                      autoHeight
                       initialState={{
-                      // pagination: {
-                      //     paginationModel: {
-                      //     pageSize: 5,
-                      //     },
-                      // },
+                      pagination: {
+                          paginationModel: {
+                          pageSize: 10,
+                          },
+                      },
                       }}
                       pageSizeOptions={[5]}
                       processRowUpdate={handleProcessRowUpdate}
