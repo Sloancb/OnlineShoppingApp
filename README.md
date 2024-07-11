@@ -3,7 +3,7 @@ This repo is for managing and developing an Online Shopping App requested by the
 
 
 Steps taken so far:
-1. Install Node.js
+1. Install Node.js at https://nodejs.org/en/download/prebuilt-installer/current
 
 Backend
 1. Set up postgre database using class information
