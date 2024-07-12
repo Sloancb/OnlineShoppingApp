@@ -31,6 +31,20 @@ exports.login = async (req, res) => {
     }
 };
 
+exports.fetchByName = async (req, res) => {
+    console.log(req)
+    const { name } = req.body;
+    try {
+        const customer = await Customer.findOne({ where: { name: name} });
+        if (!customer) {
+            return res.status(404).json({ error: 'Customer not found' });
+        }
+        res.json({ customer });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
 exports.fetchAll = async (req, res) => {
     try {
         const customer = await Customer.findAll()

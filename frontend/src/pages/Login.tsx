@@ -13,8 +13,10 @@ function LoginPage() {
         getLogin({name, password})
         .then((loggedIn)=>{
             setLoading(false)
-            if(loggedIn)
+            if(loggedIn){
                 navigate('/')
+                window.sessionStorage.setItem('user', name)
+            }
         })
     }
     useEffect(()=>{
