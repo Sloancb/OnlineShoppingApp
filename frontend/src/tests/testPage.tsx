@@ -4,7 +4,7 @@ import config from '../config.json';
 import { request } from '../API/Requests.ts';
 import { CircularProgress } from '@mui/material';
 import { testProducts } from './testData.ts';
-import { Product } from '../styling/components.tsx';
+import HomeBar, { sendMessage, Product } from '../styling/components.tsx';
 
 const TestPage: React.FC = () => {
     const [loading, setLoading] = useState(false)
@@ -12,16 +12,16 @@ const TestPage: React.FC = () => {
         console.log("handlePostProduct");
         setLoading(true);
         for (let prod of testProducts){
-        request<Product>(config.endpoint.products +'/', 'POST', prod)
-            .then((response) => {
-                console.log("product saved", response)
-                setLoading(false);
-            })
-            .catch((error) => {
-                // handle login error
-                console.log("error", error);
-                setLoading(false);
-            });
+            request<Product>(config.endpoint.products +'/', 'POST', prod)
+                .then((response) => {
+                    console.log("product saved", response)
+                    setLoading(false);
+                })
+                .catch((error) => {
+                    // handle login error
+                    console.log("error", error);
+                    setLoading(false);
+                });
         }
     }
     const handDeleteAllProduct = () => {
@@ -67,9 +67,10 @@ const TestPage: React.FC = () => {
                 setLoading(false);
             });
     };
-
+   
     return (
         <div>
+            <HomeBar>
             <div style= {{display:"dflex"}}>
                 <h1>Test Page</h1>
             </div>
@@ -84,6 +85,25 @@ const TestPage: React.FC = () => {
                 <button onClick={handlePostProduct}>handlePostProduct</button>
                 <button onClick={handDeleteAllProduct}>handDeleteAllProduct</button>
             </div>
+            <br/>
+            <div style= {{display:"dflex"}}>
+                <button onClick={()=>{
+                    localStorage.clear()
+                    console.log("Local Storage Cleared")
+                }}>Clear LocalStorage</button>
+                <button onClick={()=>{
+                    sessionStorage.clear()
+                    console.log("session Storage Cleared")
+                }}>Clear sessionStorage</button>
+            </div>
+            <br/>
+            <div style= {{display:"dflex"}}>
+                <button onClick={()=>{sendMessage("error", "Test error message") }}>send error message</button>
+                <button onClick={()=>{sendMessage('success', "Test success message")}}>send success message</button>
+                <button onClick={()=>{sendMessage('info', "Test info message")}}>send info message</button>
+                <button onClick={()=>{sendMessage('warning', "Test warning message")}}>send warning message</button>
+            </div>
+            </HomeBar>
         </div>
     );
 };

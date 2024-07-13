@@ -3,6 +3,7 @@ This repo is for managing and developing an Online Shopping App requested by the
 
 
 Steps taken so far:
+<<<<<<< HEAD
 
 1. Install Node.js
 Frontend Development
@@ -12,3 +13,21 @@ Frontend Development
     npm install dependencies
 Backend Development
 1. install npm install express for backend
+=======
+1. Install Node.js at https://nodejs.org/en/download/prebuilt-installer/current
+
+Backend
+1. Set up postgre database using class information
+2. Create/Setup .env to match database
+3. cd into backend
+4. run node installation
+    npm install
+5. run the server
+    npm run start
+Frontend
+1. cd into frontend
+2. run node installation
+    npm install
+3. run the server
+    npm run start
+>>>>>>> develop

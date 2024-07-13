@@ -1,49 +1,25 @@
-import React, { useState } from 'react';
-import { request } from '../API/Requests.ts';
-import config from '../config.json';
-import { useNavigate } from "react-router-dom";
-import { Alert, Button, Card, CardContent, CircularProgress, Paper, TextField, styled } from '@mui/material';
-import { error } from '../styling/components.tsx';
-// import {Paper} from '../styling/components.tsx';
-function Login() {
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from "react-router-dom";
+import { Button, CircularProgress, Paper, TextField, Typography } from '@mui/material';
+import { getLogin } from '../API/customerAPI.ts';
+
+function LoginPage() {
     const navigate = useNavigate();
-    const [email, setEmail] = useState('');
+    const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<error>({isError : false, message:""});
-
-    const handleLogin = () => {
-        setLoading(true);
-        request(config.endpoint.customers + '/login', 'POST', { email, password })
-            .then((response) => {
-                setLoading(false);
-                if(response !== undefined)
-                    navigate('/home');
-            })
-            .catch((error) => {
-                // handle login error
-                console.log("error", error);
-                setLoading(false);
-                setError({isError: true, message:error});
-            });
-    };
-    const handleRegister = () => {
-        setLoading(true);
-        let name = email + "@gmail.com";
-        request(config.endpoint.customers+'/Register', 'POST', { name, email, password })
-            .then((response) => {
-                // handle successful login
-                console.log("response", response)
-                setLoading(false);
-            })
-            .catch((error) => {
-                // handle login error
-                console.log("error", error);
-                setLoading(false);
-                setError({isError: true, message:error});
-            });
-    };
-
+    const handleLogin = ()=>{
+        setLoading(true)
+        getLogin({name, password})
+        .then((loggedIn)=>{
+            setLoading(false)
+            if(loggedIn)
+                navigate('/')
+        })
+    }
+    useEffect(()=>{
+        localStorage.clear()
+    },[])
     return (
         <div className="container">
             <Paper className={"paper"} elevation={3} >
@@ -54,9 +30,9 @@ function Login() {
             <div style={{display:"flex"}}>
                 <TextField
                     label="Username"
-                    value={email}
+                    value={name}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                        setEmail(event.target.value);
+                        setName(event.target.value);
                     }}
                 />
                 <TextField
@@ -68,13 +44,12 @@ function Login() {
                     }}
                 />
                 <Button onClick={handleLogin}>Login</Button>
-                <Button onClick={handleRegister}>Register</Button>
             </div>
             <br/>
-            {error.isError && <Alert severity="error">{error.message}</Alert>}
+            <Typography>Don't have an account? {<Link to={'../Register'}>Click here!</Link>}</Typography>
             </Paper>
         </div>
     );
 }
 
-export default Login;
+export default LoginPage;

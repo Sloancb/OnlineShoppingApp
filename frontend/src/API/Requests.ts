@@ -1,16 +1,22 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import configData from '../config.json';
-export async function request<T>(endpoint: string, method: string, data?: any): Promise<T>{
-    let url = configData.backendUrl + endpoint;
+
+export async function request<T>(endpoint: string, method: string, data?: any){
+    
     let returnData;
+    let url = configData.backendUrl + endpoint;
+    const jwt = localStorage.getItem("jwt")
     await axios({
         method: method,
         url:url, 
         data: data,
         timeout: 5000,
+        headers: {
+            Authorization: jwt,
+        },
     })
     .then((response) => {
-        returnData = response.data;
+        returnData =  response.data;
     })
     .catch((error) => {
         console.log("API Error", error);
