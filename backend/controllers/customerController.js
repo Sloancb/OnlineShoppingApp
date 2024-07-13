@@ -32,7 +32,6 @@ exports.login = async (req, res) => {
 };
 
 exports.fetchByName = async (req, res) => {
-    console.log(req)
     const { name } = req.body;
     try {
         const customer = await Customer.findOne({ where: { name: name} });

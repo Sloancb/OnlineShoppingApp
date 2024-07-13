@@ -6,7 +6,7 @@ router.post('/register', customerController.register);
 router.post('/login', customerController.login);
 
 router.get('/fetchAll', customerController.fetchAll);
-router.get('/fetchByName', customerController.fetchByName);
+router.post('/fetchByName', customerController.fetchByName);
 
 router.delete("/deleteAll", customerController.deleteAll);
 module.exports = router;

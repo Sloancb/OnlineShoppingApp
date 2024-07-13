@@ -13,7 +13,7 @@ function ProfilePage() {
         setLoading(true);
         let name1 = window.sessionStorage.getItem('user');
         console.log("name", name)
-        request(config.endpoint.customers + '/fetchByName','GET', {name:name1})
+        request(config.endpoint.customers + '/fetchByName','POST', {name:name1})
             .then((response) => {
                 // handle successful GetCustomer
                 console.log("response", response)
