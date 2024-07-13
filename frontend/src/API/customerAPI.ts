@@ -49,7 +49,7 @@ export async function postCustomer(data : customerData):Promise<boolean>{
         .catch((errorMessage) => {
             // handle login error
             console.log("error", errorMessage);            
-            sendMessage('error', "Rigstration  Failed:" + errorMessage)
+            sendMessage('error', "Registration  Failed:" + errorMessage)
         });
     return isRegistered
 };

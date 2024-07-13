@@ -22,7 +22,13 @@ const Home: React.FC = () => {
       request<Product[]>(config.endpoint.products + '/', 'GET')
       .then((response) => {
         setData(response);
-      });
+      })
+      .catch((error)=>{
+        console.log(error)
+        setData([]);
+        //TODO tell user no prods were found?
+      })
+      
     }, []);
     const handleProcessRowUpdate = (updatedRow, originalRow) => {
       request<Product>(config.endpoint.products +'/', 'POST', updatedRow)
