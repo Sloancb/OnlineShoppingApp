@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import config from '../config.json';
 
 import { TextField } from '@mui/material';
@@ -8,15 +8,18 @@ import HomeBar, { EnsureLoggedIn, sendMessage } from '../styling/components.tsx'
 function ProfilePage() {
     
     const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false)
     const HandleCustomerFetchByName = () => {
         setLoading(true);
         let name1 = window.sessionStorage.getItem('user');
-        console.log("name", name)
+        
         request(config.endpoint.customers + '/fetchByName','POST', {name:name1})
             .then((response) => {
                 // handle successful GetCustomer
                 console.log("response", response)
+                setName(response.customer.name);
+                setEmail(response.customer.email);
                 setLoading(false);
             })
             .catch((error) => {
@@ -25,6 +28,9 @@ function ProfilePage() {
                 setLoading(false);
             });
     }
+    useEffect(()=>{
+        HandleCustomerFetchByName();
+    },[])
     return (
     <EnsureLoggedIn>
         <HomeBar>
@@ -44,10 +50,10 @@ function ProfilePage() {
                     />
                     <TextField
                         label="Email"
-                        /*value={email}
+                        value={email}
                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                             setEmail(event.target.value);
-                        }}*/
+                        }}
                     />
                     <TextField
                         label="Credit Card Number"
