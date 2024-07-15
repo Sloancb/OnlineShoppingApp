@@ -1,4 +1,4 @@
-const { Customer } = require('../models');
+const { Customer, Address } = require('../models');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -34,11 +34,13 @@ exports.login = async (req, res) => {
 exports.fetchByName = async (req, res) => {
     const { name } = req.body;
     try {
+        // Address.create({ customer_id: 2, address: '123 Main St' }); <-- Just for testing/Getting one in system
         const customer = await Customer.findOne({ where: { name: name} });
         if (!customer) {
             return res.status(404).json({ error: 'Customer not found' });
         }
-        res.json({ customer });
+        const address = await Address.findOne({ where: { customer_id: customer.id } });
+        res.json({ customer, address });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

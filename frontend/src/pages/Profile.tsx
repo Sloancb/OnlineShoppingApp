@@ -9,6 +9,7 @@ function ProfilePage() {
     
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
+    const [address, setAddress] = useState('');
     const [loading, setLoading] = useState(false)
     const HandleCustomerFetchByName = () => {
         setLoading(true);
@@ -20,6 +21,7 @@ function ProfilePage() {
                 console.log("response", response)
                 setName(response.customer.name);
                 setEmail(response.customer.email);
+                setAddress(response.address.address);
                 setLoading(false);
             })
             .catch((error) => {
@@ -28,6 +30,7 @@ function ProfilePage() {
                 setLoading(false);
             });
     }
+    const HandleCustomerSubmit = () => {}
     useEffect(()=>{
         HandleCustomerFetchByName();
     },[])
@@ -71,12 +74,13 @@ function ProfilePage() {
                     />
                     <TextField
                         label="Delivery Address"
-                        /*value={name}
+                        value={address}
                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                            setName(event.target.value);
-                        }}*/
+                            setAddress(event.target.value);
+                        }}
                     />
-                
+
+                    <button onClick={HandleCustomerSubmit}>Submit Changes</button>
                 <br/>
                 </div>
         </HomeBar>

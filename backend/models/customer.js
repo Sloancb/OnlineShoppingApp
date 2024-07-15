@@ -16,11 +16,6 @@ module.exports = (sequelize, DataTypes) => {
         current_balance: {
             type: DataTypes.DECIMAL,
             defaultValue: 0
-        },
-        address: {
-            type: DataTypes.STRING,
-            allowNull: true
-        
         }
     });
 

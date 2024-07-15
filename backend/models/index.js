@@ -11,7 +11,6 @@ const Address = require('./address')(sequelize, Sequelize);
 
 Customer.hasMany(Order);
 Customer.hasMany(CreditCard);
-Customer.hasOne(Address);
 Order.belongsTo(Customer);
 
 Product.belongsToMany(Warehouse, { through: Stock });
@@ -27,5 +26,6 @@ module.exports = {
     Order,
     Stock,
     Warehouse,
-    CreditCard
+    CreditCard,
+    Address
 };
