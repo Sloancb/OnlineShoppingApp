@@ -13,10 +13,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DATE,
             allowNull: false
         },
-        cvv: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
+
         billing_address: {
             type: DataTypes.STRING,
             allowNull: false

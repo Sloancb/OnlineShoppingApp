@@ -2,15 +2,18 @@ import React, {useEffect, useState} from 'react';
 import config from '../config.json';
 
 import { TextField } from '@mui/material';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import { request } from '../API/Requests.ts';
-import HomeBar, { EnsureLoggedIn, sendMessage } from '../styling/components.tsx';
+import HomeBar, { EnsureLoggedIn, sendMessage, CreditCard } from '../styling/components.tsx';
 
 function ProfilePage() {
     
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [address, setAddress] = useState('');
-    const [loading, setLoading] = useState(false)
+    const [cardData, setCardData] = useState<CreditCard[]>([]);
+    const [loading, setLoading] = useState(false);
+
     const HandleCustomerFetchByName = () => {
         setLoading(true);
         let name1 = window.sessionStorage.getItem('user');
@@ -22,7 +25,9 @@ function ProfilePage() {
                 setName(response.customer.name);
                 setEmail(response.customer.email);
                 setAddress(response.address.address);
+                setCardData(response.creditCards);
                 setLoading(false);
+                console.log("cardData", cardData);
             })
             .catch((error) => {
                 // handle GetCustomer error
@@ -30,10 +35,21 @@ function ProfilePage() {
                 setLoading(false);
             });
     }
+
     const HandleCustomerSubmit = () => {}
     useEffect(()=>{
         HandleCustomerFetchByName();
     },[])
+
+    const columns: GridColDef<CreditCard>[] = [
+        { field: 'card_number', headerName: 'Card Number', width: 150, editable:true },
+        { field: 'billing_address', headerName: 'Payment Address', width: 150, editable:true },
+        { field: 'expiry_date', headerName: 'Expiration Date', width: 150, editable:true },
+    ];
+
+    const handleProcessRowUpdate = (updatedRow, originalRow) => {
+    };
+
     return (
     <EnsureLoggedIn>
         <HomeBar>
@@ -59,26 +75,28 @@ function ProfilePage() {
                         }}
                     />
                     <TextField
-                        label="Credit Card Number"
-                        /*value={name}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                            setName(event.target.value);
-                        }}*/
-                    />
-                    <TextField
-                        label="Payment Address"
-                        /*value={name}
-                        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                            setName(event.target.value);
-                        }}*/
-                    />
-                    <TextField
                         label="Delivery Address"
                         value={address}
                         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                             setAddress(event.target.value);
                         }}
                     />
+                    <DataGrid
+                      rows={cardData}
+                      columns={columns}
+                      autoHeight
+                      initialState={{
+                      pagination: {
+                          paginationModel: {
+                          pageSize: 10,
+                          },
+                      },
+                      }}
+                      pageSizeOptions={[5]}
+                      processRowUpdate={handleProcessRowUpdate}
+                      checkboxSelection
+                      disableRowSelectionOnClick
+                  />
 
                     <button onClick={HandleCustomerSubmit}>Submit Changes</button>
                 <br/>

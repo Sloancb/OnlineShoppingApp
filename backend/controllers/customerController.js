@@ -1,4 +1,4 @@
-const { Customer, Address } = require('../models');
+const { Customer, Address, CreditCard } = require('../models');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -35,12 +35,16 @@ exports.fetchByName = async (req, res) => {
     const { name } = req.body;
     try {
         // Address.create({ customer_id: 2, address: '123 Main St' }); <-- Just for testing/Getting one in system
+        // CreditCard.create({ customer_id: 2, card_number: '123456789012', expiry_date: '2023-12-31', billing_address: '123 Main St' }); // <-- Just for testing/Getting one in system
+        console.log('Credit Card Created');
         const customer = await Customer.findOne({ where: { name: name} });
         if (!customer) {
             return res.status(404).json({ error: 'Customer not found' });
         }
         const address = await Address.findOne({ where: { customer_id: customer.id } });
-        res.json({ customer, address });
+        const creditCards = await CreditCard.findAll({ where: { customer_id: customer.id } });
+        console.log('credit Cards: ', creditCards);
+        res.json({ customer, address, creditCards });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

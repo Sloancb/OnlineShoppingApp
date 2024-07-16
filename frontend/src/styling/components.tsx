@@ -162,3 +162,10 @@ export interface Product {
 export const delay = ms => new Promise(
   resolve => setTimeout(resolve, ms)
 );
+
+export interface CreditCard {
+  id: number,
+  cardNumber: string,
+  expiryDate: string,
+  paymentAddress: string
+}
