@@ -36,7 +36,22 @@ function ProfilePage() {
             });
     }
 
-    const HandleCustomerSubmit = () => {}
+    const HandleCustomerSubmit = () => {
+        setLoading(true);
+        let user_id = window.sessionStorage.getItem('id');
+        request(config.endpoint.customers + '/update','POST', {customer_id:user_id, name:name, email:email, address:address, creditCards:cardData})
+            .then((response) => {
+                // handle successful update
+                console.log("response", response)
+                setLoading(false);
+            })
+            .catch((error) => {
+                // handle update error
+                console.log("error", error);
+                setLoading(false);
+            });
+    }
+
     useEffect(()=>{
         HandleCustomerFetchByName();
     },[])

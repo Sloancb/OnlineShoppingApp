@@ -25,7 +25,7 @@ exports.login = async (req, res) => {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
         const token = jwt.sign({ id: customer.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.json({ token });
+        res.json({ token, customer });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -49,6 +49,34 @@ exports.fetchByName = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+
+exports.update = async (req, res) => {
+    console.log('Update Customer');
+    const { customer_id, name, email, address, creditCards} = req.body;
+    try {
+        const customer = await Customer.findOne({ where: { id: customer_id } });
+        if (!customer) {
+            return res.status(404).json({ error: 'Customer not found' });
+        }
+
+        // Updates Customer name/email
+        await Customer.update({ name, email }, { where: { id: customer_id } });
+
+        // Updates Address
+        await Address.update({ address }, { where: { customer_id: customer_id } });
+
+        // Deletes all old credit cards and creates new ones
+        await CreditCard.destroy({ where: { customer_id: customer_id } });
+        creditCards.forEach(async (card) => {
+            await CreditCard.create({ customer_id, ...card });
+        });
+
+        res.json({ message: 'Customer updated' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
 
 exports.fetchAll = async (req, res) => {
     try {
