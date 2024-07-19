@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import * as React from 'react';
 //MaterialUI
-import { Alert, Menu, MenuItem, Snackbar,  Paper as basePaper } from '@mui/material';
+import { Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Menu, MenuItem, Snackbar,  TextField,  ToggleButton,  ToggleButtonGroup,  Paper as basePaper } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -15,6 +15,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import PersonIcon from '@mui/icons-material/Person';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import {HandleLogout} from '../API/customerAPI.ts';
+import { fetchAllProducts, postProduct, Product } from '../API/productAPI.ts';
 
 // Home bar
 export default function HomeBar({children}) {
@@ -83,8 +84,9 @@ export const EnsureLoggedIn = ({children}) =>{
   const jwt = localStorage.getItem("jwt")
   const navigate = useNavigate();
   React.useEffect(()=>{
-    if(!jwt){
+    if(!jwt || jwt == "undefined" ){
       navigate('/Login')
+      sendMessage("warning", "Invalid Persmission!")
     }
   })
   if(jwt)
@@ -94,7 +96,40 @@ export const EnsureLoggedIn = ({children}) =>{
       </div>
     ) 
 }
+export const EnsureAdmin = ({children}) =>{
+  const adminToken = localStorage.getItem("adminToken")
+  const navigate = useNavigate();
+  React.useEffect(()=>{
+    if(!adminToken || adminToken == "undefined" ){
+      navigate('/Login')
+      sendMessage("warning", "Invalid Persmission!")
+    }
+  })
+  if(adminToken)
+    return (
+      <div>
+        {children}
+      </div>
+    ) 
+}
 
+export const EnsureNotAdmin = ({children}) =>{
+  const adminToken = localStorage.getItem("adminToken")
+  const navigate = useNavigate();
+  React.useEffect(()=>{
+    console.log(adminToken)
+    if(adminToken || adminToken != "undefined" ){
+      navigate('/')
+      sendMessage("warning", "Invalid Permission!")
+    }
+  })
+  if(!adminToken || adminToken == "undefined" )
+    return (
+      <div>
+        {children}
+      </div>
+    ) 
+}
 //Message Handler
 export interface message{
   exists: boolean,
@@ -148,17 +183,123 @@ export const HandleMessages = ({children}:any) =>{
     </div>
   )
 }
-// interfaces
-export interface Product {
-  id : number,
-  name: string,
-  category: string,
-  brand: string,
-  size: string,
-  description: string,
-  price: number
-}
 
-export const delay = ms => new Promise(
-  resolve => setTimeout(resolve, ms)
-);
+//Products
+interface ProductFormProps{
+  open:boolean,
+  setOpen:React.Dispatch<React.SetStateAction<boolean>>
+  setData: React.Dispatch<React.SetStateAction<Product[]>>
+}
+export const ProductForm = (props:ProductFormProps) =>{
+  let {open, setOpen, setData} = props
+  let [name, setName] = useState("")
+  let [category, setCategory] = useState("")
+  let [brand, setBrand] = useState("")
+  let [size, setSize] = useState("")
+  let [description, setDescription] = useState("")
+  let [price, setPrice] = useState<number>(0)
+  const handleClose = () => {
+    handleDataReset()
+    setOpen(false);
+  };
+  const handleDataReset = () =>{
+    setName("")
+    setCategory("")
+    setBrand("")
+    setSize("")
+    setDescription("")
+    setPrice(0)
+  }
+  const handleSubmit = async () => {
+    await postProduct({id:0, name, category, brand, size, description, price})
+    .catch(()=>{
+      sendMessage("error", "Product not saved!")
+    })
+    await fetchAllProducts()
+    .then((response)=>{
+      setData(response)
+    })
+    setOpen(false)
+    sendMessage("success", "Product saved!")
+    handleDataReset()
+  }
+  return (
+      <Dialog
+        open={open}
+        onClose={handleClose}
+      >
+        <DialogTitle>Create a new Product</DialogTitle>
+        <DialogContent>
+        <Grid container spacing={0}>
+          <Grid item xs ={6}>
+            <div className="Form">
+                <TextField
+                    label="name"
+                    value={name}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                        setName(event.target.value);
+                    }}
+                />
+            </div>
+            <div className="Form">
+                <TextField
+                    label="category"
+                    value={category}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      setCategory(event.target.value);
+                    }}
+                />
+            </div>
+            <div className="Form">
+                <TextField
+                    label="brand"
+                    type='brand'
+                    value={brand}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      setBrand(event.target.value);
+                    }}
+                />
+            </div>
+          </Grid>
+              <Grid item xs ={6}>
+              <div className="Form">
+                  {/* Add new input fields for the payment billing information */}
+                  <TextField
+                      label="size"
+                      type='size'
+                      value={size}
+                      onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                        setSize(event.target.value);
+                      }}
+                  />
+              </div>
+                  <div className="Form">
+                      <TextField
+                          label="Description"
+                          value={description}
+                          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                            setDescription(event.target.value);
+                          }}
+                      />
+                  </div>
+                  <div className="Form">
+                      <TextField
+                          label="price"
+                          value={price}
+                          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                              setPrice(+event.target.value);
+                          }}
+                      />
+                  </div>
+          </Grid>
+        </Grid>
+        </DialogContent>
+        <DialogActions>
+          <div className='align-center'>
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button onClick={handleSubmit}>Submit</Button>
+          </div>
+        </DialogActions>
+      </Dialog>
+  );
+}

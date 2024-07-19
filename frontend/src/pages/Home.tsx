@@ -3,19 +3,18 @@ import { request } from '../API/Requests.ts';
 import config from '../config.json';
 import { Box } from '@mui/material';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { EnsureLoggedIn, Product } from '../styling/components.tsx'
+import { EnsureLoggedIn } from '../styling/components.tsx'
 import HomeBar from '../styling/components.tsx';
-
+import { Product } from '../API/productAPI.ts';
 
 const columns: GridColDef<Product>[] = [
-    { field: 'name', headerName: 'Name', width: 150, editable:true },
-    { field: 'category', headerName: 'Category', width: 150, editable:true },
-    { field: 'brand', headerName: 'Brand', width: 150, editable:true },
-    { field: 'size', headerName: 'Size', width: 150, editable:true },
-    { field: 'description', headerName: 'Description', width: 150, editable:true },
-    { field: 'price', headerName: 'Price', width: 150, editable:true },
+    { field: 'name', headerName: 'Name', width: 150 },
+    { field: 'category', headerName: 'Category', width: 150 },
+    { field: 'brand', headerName: 'Brand', width: 150 },
+    { field: 'size', headerName: 'Size', width: 150 },
+    { field: 'description', headerName: 'Description'},
+    { field: 'price', headerName: 'Price', width: 150 },
   ];
-
 const Home: React.FC = () => {
     const [data, setData] = useState<Product[]>([]);
     useEffect(() => {
@@ -43,8 +42,6 @@ const Home: React.FC = () => {
           console.log("error", error);
           // setLoading(false);
       });
-      console.log(data)
-      console.log(updatedRow)
     };
     return (
         <div >

@@ -11,10 +11,12 @@ function LoginPage() {
     const handleLogin = ()=>{
         setLoading(true)
         getLogin({name, password})
-        .then((loggedIn)=>{
+        .then((loggedInAs)=>{
             setLoading(false)
-            if(loggedIn)
+            if(loggedInAs == "customer")
                 navigate('/')
+            else if(loggedInAs == "staff")
+                navigate('/staff')
         })
     }
     useEffect(()=>{
@@ -28,19 +30,19 @@ function LoginPage() {
                 {loading && <CircularProgress size={20}  style={{textAlign:"center", padding:3}}/>}
             </h1>
             <div style={{display:"flex"}}>
-                <TextField
+                <TextField className='Form'
                     label="Username"
                     value={name}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                         setName(event.target.value);
                     }}
                 />
-                <TextField
+                <TextField 
                     label="Password"
                     type='password'
                     value={password}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                    setPassword(event.target.value);
+                        setPassword(event.target.value);
                     }}
                 />
                 <Button onClick={handleLogin}>Login</Button>

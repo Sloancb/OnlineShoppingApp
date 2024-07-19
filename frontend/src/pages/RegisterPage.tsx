@@ -14,8 +14,8 @@ function RegisterPage() {
     const [job_title, setJob_title] = useState('');
     const [salary, setSalary] = useState('');
     const [staffCode, setStaffCode] = useState('');
-    const [isStaff, setIsStaff] = useState(false);
 
+    const [isStaff, setIsStaff] = useState(false);
     const [loading, setLoading] = useState(false);
     const handleRegister = ()=>{
         if(!isStaff){
@@ -32,7 +32,7 @@ function RegisterPage() {
     }
     const handleStaffRegister = ()=>{
         setLoading(true)
-        postStaff({email, name, password, job_title, salary})
+        postStaff({email, name, password,job_title, salary, adminCode:staffCode})
         .then((isRegistered)=>{
             setLoading(false)
             if(isRegistered)
@@ -41,7 +41,7 @@ function RegisterPage() {
     }
     return (
         <div className="container">
-            <Paper className={"paper"} elevation={3} style={{width:'10lh', textAlign:'center'}} >
+            <Paper className={"paper"} elevation={3} style={{ textAlign:'center'}} >
                 <h1>
                     Register
                     {loading && <CircularProgress size={20}  />}

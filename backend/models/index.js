@@ -6,7 +6,8 @@ const Product = require('./product')(sequelize, Sequelize);
 const Order = require('./order')(sequelize, Sequelize);
 const Stock = require('./stock')(sequelize, Sequelize);
 const Warehouse = require('./warehouse')(sequelize, Sequelize);
-const Staff = require('./staff')(sequelize, Sequelize)
+const Staff = require('./staff')(sequelize, Sequelize);
+const Admin = require('./admin')(sequelize, Sequelize);
 
 Customer.hasMany(Order);
 Order.belongsTo(Customer);
@@ -24,5 +25,6 @@ module.exports = {
     Order,
     Stock,
     Staff,
-    Warehouse
+    Warehouse,
+    Admin
 };

@@ -13,6 +13,7 @@ export interface staffData {
     password : string
     job_title : string
     salary : string
+    adminCode : string
 }
 export async function postStaff(data : staffData):Promise<boolean>{
     let isRegistered = false
@@ -20,13 +21,13 @@ export async function postStaff(data : staffData):Promise<boolean>{
         .then((response) => {
             // handle successful login
             console.log("response", response)
-            sendMessage('success', "Staff Regstration Successful")
+            sendMessage('success', "Staff Registration Successful")
             isRegistered = true
         })
         .catch((errorMessage) => {
             // handle login error
             console.log("error", errorMessage);            
-            sendMessage('error', "Staff Regstration  Failed:" + errorMessage)
+            sendMessage('error', "Staff Regstration Failed: " + errorMessage)
         });
     return isRegistered
 };
