@@ -12,6 +12,9 @@ function ProfilePage() {
     const [email, setEmail] = useState('');
     const [address, setAddress] = useState('');
     const [cardData, setCardData] = useState<CreditCard[]>([]);
+    const [newCardNumber, setNewCardNumber] = useState('');
+    const [newBillingAddress, setNewBillingAddress] = useState('');
+    const [newExpiryDate, setNewExpiryDate] = useState('');
     const [loading, setLoading] = useState(false);
 
     const HandleCustomerFetchByName = () => {
@@ -43,6 +46,7 @@ function ProfilePage() {
             .then((response) => {
                 // handle successful update
                 console.log("response", response)
+                window.sessionStorage.setItem('user', name);
                 setLoading(false);
             })
             .catch((error) => {
@@ -63,6 +67,24 @@ function ProfilePage() {
     ];
 
     const handleProcessRowUpdate = (updatedRow, originalRow) => {
+        request<CreditCard>(config.endpoint.customers +'/createCreditCard', 'POST', {customer_id:window.sessionStorage.getItem('id'), card_number:updatedRow.card_number, billing_address:updatedRow.billing_address, expiry_date:updatedRow.expiry_date})
+        .then((response) => {
+            let name1 = window.sessionStorage.getItem('user');
+            console.log("product saved", response)
+            request<CreditCard[]>(config.endpoint.customers + '/fetchByName', 'POST', {name:name1})
+            .then((response) => {
+              setCardData(response.creditCards);
+            });
+        })
+
+        .catch((error) => {
+            console.log("error", error);
+            // setLoading(false);
+        });
+    };
+
+    const HandleAddCard = () => {
+        
     };
 
     return (
@@ -70,6 +92,7 @@ function ProfilePage() {
         <HomeBar>
             
                 <div className="container">
+                    <div>
                     <h2>This is the profile page</h2>    
                     <button onClick={HandleCustomerFetchByName}>handleCustomerFetchByName</button>
                     <button onClick={()=>{sendMessage('success', "Test success message")}}>send success message</button>
@@ -114,6 +137,33 @@ function ProfilePage() {
                   />
 
                     <button onClick={HandleCustomerSubmit}>Submit Changes</button>
+                    </div>
+
+                    <div>
+                        <h2>Add a Credit Card</h2>
+                        <TextField
+                            label="Card Number"
+                            value={newCardNumber}
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                setNewCardNumber(event.target.value);
+                            }}
+                        />
+                        <TextField
+                            label="Billing Address"
+                            value={newBillingAddress}
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                setNewBillingAddress(event.target.value);
+                            }}
+                        />
+                        <TextField
+                            label="Expiration Date"
+                            value={newExpiryDate}
+                            onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                setNewExpiryDate(event.target.value);
+                            }}
+                        />
+                        <button onClick={HandleAddCard}>Add Card</button>
+                    </div>
                 <br/>
                 </div>
         </HomeBar>

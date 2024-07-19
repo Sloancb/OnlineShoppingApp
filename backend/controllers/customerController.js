@@ -31,12 +31,21 @@ exports.login = async (req, res) => {
     }
 };
 
+exports.createCreditCard = async (req, res) => {
+    const { customer_id, card_number, expiry_date, billing_address } = req.body;
+    try {
+        const creditCard = await CreditCard.create({ customer_id, card_number, expiry_date, billing_address });
+        res.status(201).json(creditCard);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
 exports.fetchByName = async (req, res) => {
     const { name } = req.body;
     try {
         // Address.create({ customer_id: 2, address: '123 Main St' }); <-- Just for testing/Getting one in system
         // CreditCard.create({ customer_id: 2, card_number: '123456789012', expiry_date: '2023-12-31', billing_address: '123 Main St' }); // <-- Just for testing/Getting one in system
-        console.log('Credit Card Created');
         const customer = await Customer.findOne({ where: { name: name} });
         if (!customer) {
             return res.status(404).json({ error: 'Customer not found' });
