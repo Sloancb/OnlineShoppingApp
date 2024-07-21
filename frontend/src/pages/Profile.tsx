@@ -1,10 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import config from '../config.json';
 
-import { TextField } from '@mui/material';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { TextField, Button } from '@mui/material';
+import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { request } from '../API/Requests.ts';
 import HomeBar, { EnsureLoggedIn, sendMessage, CreditCard } from '../styling/components.tsx';
+import { isEqual } from '../styling/support.ts';
+import { createCreditCard, fetchByName, updateCustomer } from '../API/customerAPI.ts';
+import { send } from 'process';
 
 function ProfilePage() {
     
@@ -20,40 +23,37 @@ function ProfilePage() {
     const HandleCustomerFetchByName = () => {
         setLoading(true);
         let name1 = window.sessionStorage.getItem('user');
+        console.log("name1", name1);
+        fetchByName(name1)
+        .then((customerData) => {
+            console.log("customerData", customerData);
+            setName(customerData.customer.name);
+            setEmail(customerData.customer.email);
+            setAddress(customerData.address.address);
+            setCardData(customerData.creditCards);
+            setLoading(false);
+        })
         
-        request(config.endpoint.customers + '/fetchByName','POST', {name:name1})
-            .then((response) => {
-                // handle successful GetCustomer
-                console.log("response", response)
-                setName(response.customer.name);
-                setEmail(response.customer.email);
-                setAddress(response.address.address);
-                setCardData(response.creditCards);
-                setLoading(false);
-                console.log("cardData", cardData);
-            })
-            .catch((error) => {
-                // handle GetCustomer error
-                console.log("error", error);
-                setLoading(false);
-            });
     }
 
     const HandleCustomerSubmit = () => {
         setLoading(true);
         let user_id = window.sessionStorage.getItem('id');
-        request(config.endpoint.customers + '/update','POST', {customer_id:user_id, name:name, email:email, address:address, creditCards:cardData})
-            .then((response) => {
-                // handle successful update
-                console.log("response", response)
-                window.sessionStorage.setItem('user', name);
-                setLoading(false);
-            })
-            .catch((error) => {
-                // handle update error
-                console.log("error", error);
-                setLoading(false);
-            });
+        updateCustomer(user_id, name, email, address, cardData)
+        .then((response) => {
+            console.log("response", response);
+            setLoading(false);
+        })
+        
+    }
+
+    const handleDeleteCard = (card_id) => {
+        setLoading(true);
+        let updatedCardData = cardData.filter((card) => card.id !== card_id);
+        console.log("updatedCardData", updatedCardData);
+        setCardData(updatedCardData);
+        setLoading(false);
+    
     }
 
     useEffect(()=>{
@@ -64,27 +64,48 @@ function ProfilePage() {
         { field: 'card_number', headerName: 'Card Number', width: 150, editable:true },
         { field: 'billing_address', headerName: 'Payment Address', width: 150, editable:true },
         { field: 'expiry_date', headerName: 'Expiration Date', width: 150, editable:true },
+        {field: 'delete',
+            headerName: 'Delete',
+            renderCell: (params: GridRenderCellParams<any, Date>) => (
+                <Button
+                  variant="contained"
+                  size="small"
+                  tabIndex={params.hasFocus ? 0 : -1}
+                  onClick={() => {
+                    handleDeleteCard(params.row.id);
+                  }}
+                >
+                  Delete
+                </Button>
+            ),
+        },
     ];
 
     const handleProcessRowUpdate = (updatedRow, originalRow) => {
-        request<CreditCard>(config.endpoint.customers +'/createCreditCard', 'POST', {customer_id:window.sessionStorage.getItem('id'), card_number:updatedRow.card_number, billing_address:updatedRow.billing_address, expiry_date:updatedRow.expiry_date})
-        .then((response) => {
-            let name1 = window.sessionStorage.getItem('user');
-            console.log("product saved", response)
-            request<CreditCard[]>(config.endpoint.customers + '/fetchByName', 'POST', {name:name1})
-            .then((response) => {
-              setCardData(response.creditCards);
-            });
-        })
-
-        .catch((error) => {
-            console.log("error", error);
-            // setLoading(false);
-        });
+        if(!isEqual(updatedRow, originalRow)){
+            let updatedCardData: any[] = []; 
+            for (let i = 0; i < cardData.length; i++) {
+                if (cardData[i].id === originalRow.id) {
+                    updatedCardData[i] = updatedRow;
+                }
+                else{
+                    updatedCardData[i] = cardData[i];
+                
+                }
+            }
+            setCardData(updatedCardData);
+            console.log("updatedCardData", cardData);
+        }
+        return updatedRow;
     };
 
     const HandleAddCard = () => {
-        
+        let user_id = window.sessionStorage.getItem('id');
+        createCreditCard(user_id, newCardNumber, newBillingAddress, newExpiryDate)
+        .then((response) => {
+            console.log("response", response);
+            HandleCustomerFetchByName();
+        })
     };
 
     return (
@@ -132,7 +153,8 @@ function ProfilePage() {
                       }}
                       pageSizeOptions={[5]}
                       processRowUpdate={handleProcessRowUpdate}
-                      checkboxSelection
+                      onProcessRowUpdateError={(error) => {console.log("error", error)}}
+                      //checkboxSelection
                       disableRowSelectionOnClick
                   />
 
