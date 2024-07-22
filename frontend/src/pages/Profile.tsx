@@ -1,13 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import config from '../config.json';
 
 import { TextField, Button } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { request } from '../API/Requests.ts';
 import HomeBar, { EnsureLoggedIn, sendMessage, CreditCard } from '../styling/components.tsx';
 import { isEqual } from '../styling/support.ts';
 import { createCreditCard, fetchByName, updateCustomer } from '../API/customerAPI.ts';
-import { send } from 'process';
 
 function ProfilePage() {
     
@@ -53,7 +50,7 @@ function ProfilePage() {
         console.log("updatedCardData", updatedCardData);
         setCardData(updatedCardData);
         setLoading(false);
-    
+        updateCustomer(window.sessionStorage.getItem('id'), name, email, address, updatedCardData)
     }
 
     useEffect(()=>{
