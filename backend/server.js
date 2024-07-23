@@ -7,6 +7,7 @@ const customerRoutes = require('./routes/customerRoutes');
 const productRoutes = require('./routes/productRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const staffRoutes = require('./routes/staffRoutes');
+const checkoutRoutes = require('./routes/checkoutRoutes');
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.use('/api/customers', customerRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/staff', staffRoutes);
+app.use('/api/checkout', checkoutRoutes);
 
 sequelize.sync().then(() => {
     app.listen(process.env.PORT, () => {

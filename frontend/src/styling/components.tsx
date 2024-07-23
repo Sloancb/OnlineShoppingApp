@@ -159,6 +159,11 @@ export interface Product {
   price: number
 }
 
+export interface Cart {
+  customer_id : number,
+  total_price: number
+}
+
 export const delay = ms => new Promise(
   resolve => setTimeout(resolve, ms)
 );
