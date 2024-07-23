@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const sequelize = require('./config/database');
+const jwtAuth = require('./middleware/authMiddleware'); 
 
 const customerRoutes = require('./routes/customerRoutes');
 const productRoutes = require('./routes/productRoutes');
