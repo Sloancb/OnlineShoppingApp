@@ -27,30 +27,3 @@ export async function request<T>(endpoint: string, method: string, data?: any){
     });
     return returnData;
 }
-
-
-export async function requests<T>(endpoint: string, method: string, data?: any): Promise<T> {
-    let returnData;
-    const url = configData.backendUrl + endpoint;
-    const jwt = localStorage.getItem("jwt");
-
-    try {
-        const response = await axios({
-            method: method,
-            url: url,
-            data: data,
-            timeout: 5000,
-            headers: {
-                Authorization: `Bearer ${jwt}`
-            },
-        });
-        returnData = response.data;
-    } catch (error) {
-        console.error("API Error:", error);
-        if (error.response && error.response.data) {
-            throw new Error(error.response.data.error);
-        }
-        throw new Error(error.message);
-    }
-    return returnData;
-}
