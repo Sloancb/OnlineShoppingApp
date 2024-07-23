@@ -1,9 +1,9 @@
 //React
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import * as React from 'react';
 //MaterialUI
-import { Alert, Menu, MenuItem, Snackbar,  Paper as basePaper } from '@mui/material';
+import { Alert, Menu, MenuItem, Snackbar, TextField,  Paper as basePaper } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -15,6 +15,8 @@ import HomeIcon from '@mui/icons-material/Home';
 import PersonIcon from '@mui/icons-material/Person';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import {HandleLogout} from '../API/customerAPI.ts';
+//API
+import { getCartItemCount } from '../API/customerAPI.ts';
 
 // Home bar
 export default function HomeBar({children}) {
@@ -52,9 +54,7 @@ export default function HomeBar({children}) {
               <Grid  item xs>
                   <div style ={{textAlign:'right'}}>
                     <IconButton onClick={()=>{navigate('/Checkout')}}>
-                      <Badge  badgeContent={4} color="secondary">
-                        <ShoppingCartIcon  fontSize ={"large"}/>
-                      </Badge>
+                    <CartBadge />
                     </IconButton>
                     <IconButton id='Account-button' onClick={handleMenu}>
                       <PersonIcon fontSize ={"large"}/>
@@ -69,6 +69,34 @@ export default function HomeBar({children}) {
     </div>
   );
 }
+
+// shopping cart badge
+const CartBadge = () => {
+  const [itemCount, setItemCount] = useState(0);
+  useEffect(() => {
+      const fetchCartItemCount = async () => {
+          try {
+              const count = await getCartItemCount();
+              if (count !== -1) {
+                  setItemCount(count);
+              } else {
+                  sendMessage('error', "Failed to fetch cart item count");
+              }
+          } catch (error) {
+              sendMessage('error', `Error: ${error.message}`);
+              console.error("Error fetching cart item count:", error);
+          }
+      };
+
+      fetchCartItemCount();
+  }, []);
+
+  return (
+      <Badge badgeContent={itemCount} color="secondary">
+          <ShoppingCartIcon  fontSize ={"large"}/>
+      </Badge>
+  );
+};
 
 //paper
 export const Paper = styled(basePaper)(({ theme }) => ({
@@ -148,6 +176,31 @@ export const HandleMessages = ({children}:any) =>{
     </div>
   )
 }
+
+// quantity input field
+export function QuantityInput({ row, onQuantityChange }: { row: Product, onQuantityChange: (quantity: number) => void }) {
+  const [quantity, setQuantity] = useState(row.quantity || 1);
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newQuantity = parseInt(event.target.value, 10) || 1;
+    setQuantity(newQuantity);
+    onQuantityChange(newQuantity);
+  };
+
+  return (
+    <TextField
+      id="outlined-basic"
+      label=""
+      variant="outlined"
+      type="number"
+      InputProps={{ inputProps: { min: 1 } }}
+      value={quantity}
+      onChange={handleChange}
+    />
+  );
+}
+
+
+
 // interfaces
 export interface Product {
   id : number,
@@ -156,9 +209,17 @@ export interface Product {
   brand: string,
   size: string,
   description: string,
-  price: number
+  price: number,
+  quantity: number,
+  image_url: string,
+  image_alt: string
+}
+
+export interface SearchBar {
+  input: string
 }
 
 export const delay = ms => new Promise(
   resolve => setTimeout(resolve, ms)
 );
+

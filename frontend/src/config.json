@@ -6,6 +6,7 @@
         "customers": "/api/customers",
         "products": "/api/products",
         "orders": "/api/orders",
-        "staff": "/api/staff"
+        "staff": "/api/staff",
+        "carts": "/api/carts"
     }
 }
