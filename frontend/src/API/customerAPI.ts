@@ -68,12 +68,21 @@ export interface allCustomerData {
 
 }
 export async function fetchByName(name:string):Promise<allCustomerData>{
-    let customerData:allCustomerData = {customer:"", address:"", creditCards:[]}
+    let customerData:allCustomerData = {customer:{}, address:{}, creditCards:[]}
     await request(config.endpoint.customers + '/fetchByName','POST', {name:name})
         .then((response) => {
             // handle successful GetCustomer
             
             customerData = response
+            if(customerData.customer === null){
+                customerData.customer = {name:"", email:""}
+            }
+            if(customerData.address === null){
+                customerData.address = {address:""}
+            }
+            if(customerData.creditCards === null){
+                customerData.creditCards = []
+            }
             console.log("customerData", customerData)
         })
         .catch((error) => {

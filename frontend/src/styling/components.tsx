@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import * as React from 'react';
 //MaterialUI
-import { Alert, Menu, MenuItem, Snackbar,  Paper as basePaper } from '@mui/material';
+import { Alert, Button, Dialog, DialogTitle, DialogContent, DialogActions, Menu, MenuItem, Snackbar,  Paper as basePaper, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -14,7 +14,7 @@ import Grid from '@mui/material/Grid';
 import HomeIcon from '@mui/icons-material/Home';
 import PersonIcon from '@mui/icons-material/Person';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import {HandleLogout} from '../API/customerAPI.ts';
+import {createCreditCard, HandleLogout} from '../API/customerAPI.ts';
 
 // Home bar
 export default function HomeBar({children}) {
@@ -168,4 +168,86 @@ export interface CreditCard {
   cardNumber: string,
   expiryDate: string,
   paymentAddress: string
+}
+
+interface CreditCardFormProps{
+  open:boolean,
+  setOpen:React.Dispatch<React.SetStateAction<boolean>>
+  updateData: React.Dispatch<React.SetStateAction<CreditCard[]>>
+}
+export const CreditCardForm = (props:CreditCardFormProps) =>{
+  let {open, setOpen, updateData} = props
+  let [newNumber, setNewNumber] = useState("")
+  let [newBillingAddress, setNewBillingAddress] = useState("")
+  let [newExpiryDate, setNewExpiryDate] = useState("")
+  const handleClose = () => {
+    handleDataReset()
+    setOpen(false);
+  };
+  const handleDataReset = () =>{
+    setNewNumber("")
+    setNewBillingAddress("")
+    setNewExpiryDate("")
+  }
+  const handleSubmit = async () => {
+    let user_id = window.sessionStorage.getItem('id');
+    await createCreditCard(user_id, newNumber, newBillingAddress, newExpiryDate)
+    .catch(()=>{
+      sendMessage("error", "Credit Card not saved!")
+    })
+    setOpen(false)
+    sendMessage("success", "Credit Card saved!")
+    handleDataReset()
+    updateData()
+  }
+  return (
+      <Dialog
+        open={open}
+        onClose={handleClose}
+      >
+        <DialogTitle>Create a new Credit Card</DialogTitle>
+        <DialogContent>
+        <Grid container spacing={0}>
+          <Grid item xs ={10}>
+            <div className="Form">
+                <TextField
+                    label="Number"
+                    value={newNumber}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                        setNewNumber(event.target.value);
+                    }}
+                />
+            </div>
+            <div className="Form">
+                <TextField
+                    label="Billing Address"
+                    value={newBillingAddress}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      setNewBillingAddress(event.target.value);
+                    }}
+                />
+            </div>
+            <div className="Form">
+                <TextField
+              
+                    helperText="Exipration Date"
+                    type='date'
+                    value={newExpiryDate}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      setNewExpiryDate(event.target.value);
+                    }}
+                />
+            </div>
+          </Grid>
+              
+        </Grid>
+        </DialogContent>
+        <DialogActions>
+          <div className='align-center'>
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button onClick={handleSubmit}>Submit</Button>
+          </div>
+        </DialogActions>
+      </Dialog>
+  );
 }

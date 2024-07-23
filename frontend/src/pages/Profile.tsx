@@ -2,9 +2,9 @@ import React, {useEffect, useState} from 'react';
 
 import { TextField, Button } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import HomeBar, { EnsureLoggedIn, sendMessage, CreditCard } from '../styling/components.tsx';
+import HomeBar, { EnsureLoggedIn, sendMessage, CreditCard, CreditCardForm } from '../styling/components.tsx';
 import { isEqual } from '../styling/support.ts';
-import { createCreditCard, fetchByName, updateCustomer } from '../API/customerAPI.ts';
+import {fetchByName, updateCustomer } from '../API/customerAPI.ts';
 
 function ProfilePage() {
     
@@ -12,9 +12,10 @@ function ProfilePage() {
     const [email, setEmail] = useState('');
     const [address, setAddress] = useState('');
     const [cardData, setCardData] = useState<CreditCard[]>([]);
-    const [newCardNumber, setNewCardNumber] = useState('');
+    /*const [newCardNumber, setNewCardNumber] = useState('');
     const [newBillingAddress, setNewBillingAddress] = useState('');
-    const [newExpiryDate, setNewExpiryDate] = useState('');
+    const [newExpiryDate, setNewExpiryDate] = useState('');*/
+    const [creditCardFormOpen, setCreditCardFormOpen] = useState(false)
     const [loading, setLoading] = useState(false);
 
     const HandleCustomerFetchByName = () => {
@@ -30,6 +31,10 @@ function ProfilePage() {
             setCardData(customerData.creditCards);
             setLoading(false);
         })
+        .catch((error) => {
+            console.log("error", error);
+            setLoading(false);
+        });
         
     }
 
@@ -40,6 +45,7 @@ function ProfilePage() {
         .then((response) => {
             console.log("response", response);
             setLoading(false);
+            HandleCustomerFetchByName();
         })
         
     }
@@ -96,6 +102,7 @@ function ProfilePage() {
         return updatedRow;
     };
 
+    /*
     const HandleAddCard = () => {
         let user_id = window.sessionStorage.getItem('id');
         createCreditCard(user_id, newCardNumber, newBillingAddress, newExpiryDate)
@@ -104,6 +111,7 @@ function ProfilePage() {
             HandleCustomerFetchByName();
         })
     };
+    */
 
     return (
     <EnsureLoggedIn>
@@ -111,11 +119,14 @@ function ProfilePage() {
             
                 <div className="container">
                     <div>
-                    <h2>This is the profile page</h2>    
-                    <button onClick={HandleCustomerFetchByName}>handleCustomerFetchByName</button>
-                    <button onClick={()=>{sendMessage('success', "Test success message")}}>send success message</button>
-                    
-               
+                    <h2>Edit Account</h2>
+
+                    {/*<Button onClick={HandleCustomerFetchByName}>handleCustomerFetchByName</Button>
+                    <Button onClick={()=>{sendMessage('success', "Test success message")}}>send success message</Button>*/}
+                    <Button onClick={()=>{setCreditCardFormOpen(true)}}>Add Credit Card</Button>
+                    <CreditCardForm open={creditCardFormOpen} setOpen={setCreditCardFormOpen} updateData={HandleCustomerFetchByName}/>
+                    <br/>
+                    <br/>
                     <TextField
                         label="Username"
                         value={name}
@@ -155,9 +166,10 @@ function ProfilePage() {
                       disableRowSelectionOnClick
                   />
 
-                    <button onClick={HandleCustomerSubmit}>Submit Changes</button>
+                    <Button onClick={HandleCustomerSubmit}>Submit Changes</Button>
                     </div>
 
+                    {/*}
                     <div>
                         <h2>Add a Credit Card</h2>
                         <TextField
@@ -181,8 +193,9 @@ function ProfilePage() {
                                 setNewExpiryDate(event.target.value);
                             }}
                         />
-                        <button onClick={HandleAddCard}>Add Card</button>
+                        <Button onClick={HandleAddCard}>Add Card</Button>
                     </div>
+                    */}
                 <br/>
                 </div>
         </HomeBar>
