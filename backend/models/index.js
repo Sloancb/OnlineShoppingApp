@@ -2,6 +2,8 @@ const Sequelize = require('sequelize');
 const sequelize = require('../config/database');
 
 const Customer = require('./customer')(sequelize, Sequelize);
+const Checkout = require('./checkout')(sequelize, Sequelize);
+const CheckoutItems = require('./checkoutItems')(sequelize, Sequelize);
 const Product = require('./product')(sequelize, Sequelize);
 const Order = require('./order')(sequelize, Sequelize);
 const Stock = require('./stock')(sequelize, Sequelize);
@@ -22,6 +24,8 @@ Cart.belongsTo(Customer, { foreignKey: 'customer_id' });
 
 module.exports = {
     sequelize,
+    Checkout,
+    CheckoutItems,
     Customer,
     Product,
     Order,
