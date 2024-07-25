@@ -1,9 +1,10 @@
 //React
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Warehouse } from '../API/warehouseAPI.ts';
 import * as React from 'react';
 //MaterialUI
-import { Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Menu, MenuItem, Snackbar,  TextField,  ToggleButton,  ToggleButtonGroup,  Paper as basePaper } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Menu, MenuItem, Snackbar,  TextField,  ToggleButton,  ToggleButtonGroup,  Typography,  Paper as basePaper } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
@@ -15,7 +16,13 @@ import HomeIcon from '@mui/icons-material/Home';
 import PersonIcon from '@mui/icons-material/Person';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import {HandleLogout} from '../API/customerAPI.ts';
-import { fetchAllProducts, postProduct, Product } from '../API/productAPI.ts';
+import { editProduct, fetchAllProducts, postProduct, Product } from '../API/productAPI.ts';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { addStock, editStock, fetchStock, Stock } from '../API/stockAPI.ts';
+import { DataGrid, GridColDef, GridRenderCellParams, GridRowSelectionModel } from '@mui/x-data-grid';
+import { promises } from 'dns';
+import { useTheme } from '@emotion/react';
+import { isEqual } from './support.ts';
 
 // Home bar
 export default function HomeBar({children}) {
@@ -302,4 +309,200 @@ export const ProductForm = (props:ProductFormProps) =>{
         </DialogActions>
       </Dialog>
   );
+}
+interface AddProductToWareHouseProps {
+  warehouse : Warehouse
+  open:boolean,
+  setOpen:React.Dispatch<React.SetStateAction<boolean>>
+}
+export const AddProductToWareHouse = (props:AddProductToWareHouseProps)=>{
+  const {warehouse, open, setOpen} = props
+  const [products, setProducts] = useState<Product[]>([])
+
+  const [pageView, setPageView] = useState<"product" | "quantity">("product")
+  const [productId, setProductId] = useState(-1)
+  const [quantity, setQuantity] = useState(0)
+
+  const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
+  const handleRowSelection = (newRowSelectionModel: GridRowSelectionModel) =>{
+    let a :any = newRowSelectionModel
+    setRowSelectionModel(a[a.length-1])
+    setProductId(a[0])
+  }
+  const columns: GridColDef<Product>[] = [
+    { field: 'id', headerName: 'id', width: 120, editable:false},
+    { field: 'name', headerName: 'Name', width: 120, editable:false},
+    { field: 'category', headerName: 'Category', width: 80, editable:false },
+    { field: 'brand', headerName: 'Brand', width: 80, editable:true },
+    { field: 'size', headerName: 'Size', width: 80, editable:false },
+    { field: 'description', headerName: 'Description',width: 700, editable:false },
+    { field: 'price', headerName: 'Price', editable:false },
+  ];
+
+  const handleClose = () => {
+    setOpen(false);
+    setProductId(-1)
+    setQuantity(0)
+    setRowSelectionModel([])
+  };
+  const handleSubmit = () =>{
+    
+    addStock(productId, warehouse.id, quantity)
+    .then(()=>{
+      handleClose()
+    })
+  }
+  useEffect(() => {
+      fetchAllProducts()
+      .then((prodData)=>{
+        setProducts([...prodData])
+      })
+    }, []);
+  return (
+    <Dialog
+      maxWidth={'xl'}
+      fullWidth={false}
+      open={open}
+      onClose={handleClose}
+    >
+      <DialogTitle>Add New Product</DialogTitle>
+      <DialogContent>
+        Select a product to add to the warehouse
+        <br/>
+        { pageView == "product" ? 
+      <DataGrid
+            rows={products}
+            columns={columns}
+            autoHeight
+            initialState={{
+            pagination: {
+                paginationModel: {
+                pageSize: 6,
+                },
+            },
+            sorting: {
+              sortModel: [{ field: 'id', sort: 'desc' }],
+            },
+            }}
+            pageSizeOptions={[5]}
+            onRowSelectionModelChange={(newRowSelectionModel) => {
+              handleRowSelection(newRowSelectionModel);
+            }}
+            rowSelectionModel={rowSelectionModel}
+            checkboxSelection
+            disableRowSelectionOnClick
+            disableMultipleRowSelection
+        />
+        :
+        <div className="Form">
+          <TextField
+              label="Quantity"
+              value={quantity}
+              type={'number'}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setQuantity(+event.target.value);
+              }}
+          />
+      </div>
+          }
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleClose}>Close</Button>
+        { pageView == "product" ? <Button onClick={()=>{setPageView('quantity')}}>Add Quantity</Button> : <Button onClick={handleSubmit}>Submit</Button>}
+      </DialogActions>
+    </Dialog>
+  )
+}
+interface warehouseAccordionProps{
+  warehouse:Warehouse
+}
+export const WarehouseAccordion = (props:warehouseAccordionProps) =>{
+  const {warehouse} = props
+  const [stocks, setStocks] = useState<Stock[]>([])
+  const [expanded, setExpanded] = useState(false)
+  const [openAddProduct, setOpenAddProduct] = useState(false)
+
+  const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
+  const handleProcessRowUpdate = (updatedRow, originalRow) => {
+    if(!isEqual(updatedRow, originalRow)){
+      console.log(updatedRow)
+      if(!isEqual(updatedRow, originalRow))
+        editStock(originalRow.productId, originalRow.warehouseId, updatedRow.quantity)
+        .then(()=>{
+          fetchStock(warehouse.id)
+          .then((stocks)=>{
+            setStocks([...stocks])
+          })
+        })
+    }
+  };
+  const columns: GridColDef<Stock>[] = [
+    { field: 'productId', headerName: 'Product Id', width: 120, editable:false},
+    { field: 'name', headerName: 'Name', width: 120, editable:false},
+    { field: 'description', headerName: 'Description', width: 450, editable:false},
+    { field: 'quantity', headerName: 'quantity', width: 80, editable:true },
+
+  ];
+  const handleChange = (warehouse:Warehouse) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+    if (event.target["nodeName"] == "BUTTON")
+      return
+    if(!expanded)
+      fetchStock(warehouse.id)
+      .then((stocks)=>{
+        setStocks([...stocks])
+        setExpanded(true)
+      })
+    else 
+      setStocks([])
+      setExpanded(false)
+  };
+  return (
+    <>
+    <AddProductToWareHouse
+      warehouse={warehouse}
+      open={openAddProduct}
+      setOpen={setOpenAddProduct}
+    />
+    <Accordion expanded={expanded} onChange={handleChange(warehouse)}>
+      <AccordionSummary
+          expandIcon={<ExpandMoreIcon />}
+          aria-controls="panel2-content"
+          id="panel2-header"
+        >
+          <Typography>
+            ID:{warehouse.id} - Address:{warehouse.address} - Capacity: {warehouse.currentCapacity}/{warehouse.capacity}
+            <Button onClick={()=>{setOpenAddProduct(true)}}>Add Product</Button>
+          </Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <DataGrid
+            rows={stocks.map((stock)=>{
+              let stockId = stock.productId
+              return {...stock, id:stockId,}
+            })}
+            columns={columns}
+            autoHeight
+            initialState={{
+            pagination: {
+                paginationModel: {
+                pageSize: 6,
+                },
+            },
+            sorting: {
+              sortModel: [{ field: 'id', sort: 'desc' }],
+            },
+            }}
+            pageSizeOptions={[5]}
+            processRowUpdate={handleProcessRowUpdate}
+            onRowSelectionModelChange={(newRowSelectionModel) => {
+              setRowSelectionModel(newRowSelectionModel);
+            }}
+            rowSelectionModel={rowSelectionModel}
+            checkboxSelection
+            disableRowSelectionOnClick
+        />
+        </AccordionDetails>
+    </Accordion>
+    </>
+  )
 }

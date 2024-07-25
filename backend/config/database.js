@@ -26,6 +26,9 @@ require('dotenv').config();
     user: process.env.DB_USER,
     password:  process.env.DB_PASSWORD,
     host: 'localhost',
+    define: {
+      timestamps: false
+    },
     port: 5432,
     clientMinMessages: 'notice',
 });

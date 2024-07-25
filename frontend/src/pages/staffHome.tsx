@@ -7,6 +7,8 @@ import { EnsureAdmin, EnsureLoggedIn, ProductForm, sendMessage } from '../stylin
 import HomeBar from '../styling/components.tsx';
 import { editProduct, fetchAllProducts, handDeleteProduct, Product } from '../API/productAPI.ts';
 import { delay, isEqual } from '../styling/support.ts';
+import { fetchAllWarehouses, Warehouse } from '../API/warehouseAPI.ts';
+import { WarehouseAccordion } from '../styling/components.tsx';
 
 
 const columns: GridColDef<Product>[] = [
@@ -15,33 +17,15 @@ const columns: GridColDef<Product>[] = [
     { field: 'category', headerName: 'Category', width: 80, editable:true },
     { field: 'brand', headerName: 'Brand', width: 80, editable:true },
     { field: 'size', headerName: 'Size', width: 80, editable:true },
-    { field: 'description', headerName: 'Description',width: 400, editable:true },
+    { field: 'description', headerName: 'Description',width: 700, editable:true },
     { field: 'price', headerName: 'Price', editable:true },
-    {field: 'delete',
-    headerName: 'delete',
-    renderCell: (params: GridRenderCellParams<any, Date>) => (
-        <Button
-          variant="contained"
-          size="small"
-          tabIndex={params.hasFocus ? 0 : -1}
-        >
-          Delete
-        </Button>
-    ),
-  },
   ];
 
 const StaffHome: React.FC = () => {
-    const [data, setData] = useState<Product[]>([]);
+    const [products, setProducts] = useState<Product[]>([]);
     const [productFormOpen, setProductFormOpen] = useState(false)
     const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
-    
-    useEffect(() => {
-      fetchAllProducts()
-      .then((prodData)=>{
-        setData([...prodData])
-      })
-    }, []);
+    const [warehouses, setWarehouses] = useState<Warehouse[]>([])
 
     const handleProcessRowUpdate = (updatedRow, originalRow) => {
       if(!isEqual(updatedRow, originalRow)){
@@ -49,17 +33,17 @@ const StaffHome: React.FC = () => {
         .then(()=>{
           fetchAllProducts()
           .then((data)=>{
-            setData([...data])
+            setProducts([...data])
           })
         })
       }
     };
     const [alignment, setAlignment] = React.useState('product');
     const handleChange = (
-      event: React.MouseEvent<HTMLElement>,
-      newAlignment: string,
-    ) => {
-      setAlignment(newAlignment);
+        event: React.MouseEvent<HTMLElement>,
+        newAlignment: string,
+      ) => {
+        setAlignment(newAlignment);
     };
     const handleDelete =async () =>{
       if (rowSelectionModel.length == 0) {
@@ -75,9 +59,20 @@ const StaffHome: React.FC = () => {
       await delay(10)
       await fetchAllProducts()
         .then((data)=>{
-          setData([...data])
+          setProducts([...data])
         })
     }
+
+    useEffect(() => {
+      fetchAllProducts()
+      .then((prodData)=>{
+        setProducts([...prodData])
+      })
+      fetchAllWarehouses()
+      .then((warehouses)=>{
+        setWarehouses([...warehouses])
+      })
+    }, [alignment]);
     return (
       <div >
         <EnsureLoggedIn>
@@ -99,9 +94,9 @@ const StaffHome: React.FC = () => {
                   {alignment == 'product' ?
                   <div>
                   <Button onClick={handleDelete}>Delete Product</Button>
-                  <Button onClick={()=>{setProductFormOpen(true)}}>Add Product</Button>
+                  <Button onClick={()=>{setProductFormOpen(true)}}>Create Product</Button>
                   <DataGrid
-                      rows={data}
+                      rows={products}
                       columns={columns}
                       autoHeight
                       initialState={{
@@ -125,12 +120,21 @@ const StaffHome: React.FC = () => {
                   />
                   </div>
                   :
-                  <Button> 
-                    THis is here
-                  </Button>
+                  <div>
+                    {warehouses.map((warehouse)=>{
+                      return (
+                      <>
+                        <WarehouseAccordion
+                          warehouse={warehouse}
+                        />
+                        <br/>
+                      </>
+                      )
+                    })}
+                  </div>
                 }
               </Box>
-            <ProductForm open={productFormOpen} setOpen={setProductFormOpen} setData={setData}/>
+            <ProductForm open={productFormOpen} setOpen={setProductFormOpen} setData={setProducts}/>
           </HomeBar>
           </EnsureAdmin>
         </EnsureLoggedIn>
