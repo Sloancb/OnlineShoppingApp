@@ -120,4 +120,27 @@ export async function handleAddToCart(product: Product, quantity: number) {
     }
 };
 
+export async function getCartItems(){
+    try {
+        let c_id = window.sessionStorage.getItem('id');     // customer id
+        if (!c_id) {
+            sendMessage('error', "Account not logged in");
+            return -1;
+        }
+        const customerId = parseInt(c_id, 10);
+        
+        const response = await request<cartItem[]>(
+            `${config.endpoint.carts}/getItems/${customerId}`, 'GET'
+        );
+
+        if (!response) {
+            return -1;
+        }
+
+        return response;
+    } catch (error) {
+        sendMessage('error', "Failed to retrieve cart");
+        return -1;
+    }
+};
 
