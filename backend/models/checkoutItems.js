@@ -1,11 +1,15 @@
 module.exports = (sequelize, DataTypes) => {
-    const Stock = sequelize.define('Stock', {
+    const CheckoutItems = sequelize.define('CheckoutItems', {
+        checkout_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
         product_id: {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        warehouse_id: {
-            type: DataTypes.INTEGER,
+        product_price: {
+            type: DataTypes.DECIMAL,
             allowNull: false
         },
         quantity: {
@@ -13,6 +17,6 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         }
     });
-    
-    return Stock;
+
+    return CheckoutItems;
 };

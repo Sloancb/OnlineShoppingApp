@@ -14,6 +14,7 @@ function LoginPage() {
         .then((loggedIn)=>{
             setLoading(false)
             if(loggedIn){
+
                 navigate('/')
                 window.sessionStorage.setItem('user', name)
             }
