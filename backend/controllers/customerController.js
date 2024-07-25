@@ -74,6 +74,12 @@ exports.update = async (req, res) => {
 
         // Updates Address
         await Address.update({ address }, { where: { customer_id: customer_id } });
+        address1 = await Address.findOne({ where: { customer_id: customer_id } });
+        console.log('Address: ', address1);
+        if (address1 === null) {
+            await Address.create({ customer_id, address });
+            console.log('Address created');
+        }
 
         // Deletes all old credit cards and creates new ones
         await CreditCard.destroy({ where: { customer_id: customer_id } });

@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 import configData from '../config.json';
 
 export async function request<T>(endpoint: string, method: string, data?: any){
-    
+    console.log(data)
     let returnData;
     let url = configData.backendUrl + endpoint;
     const jwt = localStorage.getItem("jwt")
