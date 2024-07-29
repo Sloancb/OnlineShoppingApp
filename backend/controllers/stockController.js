@@ -1,6 +1,24 @@
-const { Stock, Product } = require('../models');
+const { Stock, Product, Warehouse } = require('../models');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+
+async function checkCapacity(warehouseId, quantity, productId){
+    const warehouse = await Warehouse.findAll({where : {id : warehouseId}})
+    const stocks = await Stock.findAll({where : {warehouseId :warehouseId}})
+    console.log(productId)
+    currentCapacity = stocks.reduce((a,b)=>{
+        console.log(b.dataValues.productId, b.dataValues.quantity)
+        if( b.dataValues.productId == productId)
+            return a
+        return a+b.dataValues.quantity
+    }, 0)
+    capacity = warehouse[0].dataValues.capacity
+    console.log('cap:', capacity)
+    console.log('comp:', currentCapacity + quantity)
+    console.log('ret:', capacity <= currentCapacity + quantity)
+    // console.log(capacity )
+    return capacity >= currentCapacity + quantity
+}
 
 exports.fetchAll = async (req, res) => {
     try {
@@ -28,8 +46,10 @@ exports.fetchStock = async (req, res) => {
 
 exports.addStock = async (req, res) => {
     const {warehouseId, productId, quantity} = req.body
-    console.log(req.body)
     try {
+        if (! await checkCapacity(warehouseId, +quantity, false)){
+            return res.status(403).json({ error: "Not enough space in warehouse!" })
+        }
         const stock = await Stock.create({ warehouseId, productId, quantity });
         res.status(201).json(stock)
     } catch (error) {
@@ -39,10 +59,12 @@ exports.addStock = async (req, res) => {
 
 exports.editStock = async (req, res) => {
     let {quantity, warehouseId, productId } = req.body
-    let control = quantity
     try {
+        if (!await checkCapacity(warehouseId, +quantity, productId)){
+            return res.status(403).json({ error: "Not enough space in warehouse!" })
+        }
         const stock = await Stock.findOne({where : {warehouseId:warehouseId, productId:productId}})
-        await stock.update({...stock, quantity:+control})
+        await stock.update({...stock, quantity:+quantity})
         await stock.save()
         res.json({ message: "Stock edited" })
     } catch (error) {

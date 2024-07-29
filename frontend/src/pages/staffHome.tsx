@@ -10,7 +10,6 @@ import { delay, isEqual } from '../styling/support.ts';
 import { fetchAllWarehouses, Warehouse } from '../API/warehouseAPI.ts';
 import { WarehouseAccordion } from '../styling/components.tsx';
 
-
 const columns: GridColDef<Product>[] = [
     { field: 'id', headerName: 'id', width: 120, editable:false},
     { field: 'name', headerName: 'Name', width: 120, editable:true},
@@ -126,6 +125,7 @@ const StaffHome: React.FC = () => {
                       <>
                         <WarehouseAccordion
                           warehouse={warehouse}
+                          setWarehouses = {setWarehouses}
                         />
                         <br/>
                       </>

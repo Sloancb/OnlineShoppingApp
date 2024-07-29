@@ -8,8 +8,10 @@ exports.fetchAll = async (req, res) => {
         const warehouses = await Warehouse.findAll()
         let warehousesInfo = []
         for (let warehouse of warehouses) {
-            const stock = await Stock.findAll({where : {warehouseId : warehouse.id}})
-            warehousesInfo.push({...warehouse.dataValues, currentCapacity: stock.length})
+            const stocks = await Stock.findAll({where : {warehouseId : warehouse.id}})
+            // console.log(stock)
+            currentCapacity = stocks.reduce((a,b)=>{return a+b.dataValues.quantity}, 0)
+            warehousesInfo.push({...warehouse.dataValues, currentCapacity: currentCapacity})
         }
         res.json( warehousesInfo );
     } catch (error) {

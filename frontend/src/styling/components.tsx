@@ -1,7 +1,7 @@
 //React
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Warehouse } from '../API/warehouseAPI.ts';
+import { fetchAllWarehouses, Warehouse } from '../API/warehouseAPI.ts';
 import * as React from 'react';
 //MaterialUI
 import { Accordion, AccordionDetails, AccordionSummary, Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Menu, MenuItem, Snackbar,  TextField,  ToggleButton,  ToggleButtonGroup,  Typography,  Paper as basePaper } from '@mui/material';
@@ -27,6 +27,7 @@ import { isEqual } from './support.ts';
 // Home bar
 export default function HomeBar({children}) {
   const navigate = useNavigate()
+  const adminToken = localStorage.getItem("adminToken")
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -45,6 +46,7 @@ export default function HomeBar({children}) {
       >
         <MenuItem onClick={()=>{navigate('/Profile')}}> My account</MenuItem>
         <MenuItem onClick={()=>{HandleLogout(navigate)}}>Logout</MenuItem>
+        {adminToken && adminToken != "undefined" && <MenuItem onClick={()=>{navigate('/staff')}}>Staff Page</MenuItem> }
       </Menu>
       <AppBar position="static">
         <Toolbar>
@@ -313,10 +315,11 @@ export const ProductForm = (props:ProductFormProps) =>{
 interface AddProductToWareHouseProps {
   warehouse : Warehouse
   open:boolean,
-  setOpen:React.Dispatch<React.SetStateAction<boolean>>
+  setOpen:React.Dispatch<React.SetStateAction<boolean>>,
+  updateWarehouses:  () => void
 }
 export const AddProductToWareHouse = (props:AddProductToWareHouseProps)=>{
-  const {warehouse, open, setOpen} = props
+  const {warehouse, open, setOpen, updateWarehouses} = props
   const [products, setProducts] = useState<Product[]>([])
 
   const [pageView, setPageView] = useState<"product" | "quantity">("product")
@@ -344,9 +347,10 @@ export const AddProductToWareHouse = (props:AddProductToWareHouseProps)=>{
     setProductId(-1)
     setQuantity(0)
     setRowSelectionModel([])
+    updateWarehouses()
+    setPageView('product')
   };
   const handleSubmit = () =>{
-    
     addStock(productId, warehouse.id, quantity)
     .then(()=>{
       handleClose()
@@ -357,7 +361,7 @@ export const AddProductToWareHouse = (props:AddProductToWareHouseProps)=>{
       .then((prodData)=>{
         setProducts([...prodData])
       })
-    }, []);
+  }, []);
   return (
     <Dialog
       maxWidth={'xl'}
@@ -415,14 +419,21 @@ export const AddProductToWareHouse = (props:AddProductToWareHouseProps)=>{
 }
 interface warehouseAccordionProps{
   warehouse:Warehouse
+  setWarehouses: React.Dispatch<React.SetStateAction<Warehouse[]>>
 }
 export const WarehouseAccordion = (props:warehouseAccordionProps) =>{
-  const {warehouse} = props
+  const {warehouse, setWarehouses} = props
   const [stocks, setStocks] = useState<Stock[]>([])
   const [expanded, setExpanded] = useState(false)
   const [openAddProduct, setOpenAddProduct] = useState(false)
 
   const [rowSelectionModel, setRowSelectionModel] = React.useState<GridRowSelectionModel>([]);
+  const updateWarehouse = () =>{
+    fetchAllWarehouses()
+    .then((warehouses)=>{
+      setWarehouses([...warehouses])
+    })
+  }
   const handleProcessRowUpdate = (updatedRow, originalRow) => {
     if(!isEqual(updatedRow, originalRow)){
       console.log(updatedRow)
@@ -432,6 +443,7 @@ export const WarehouseAccordion = (props:warehouseAccordionProps) =>{
           fetchStock(warehouse.id)
           .then((stocks)=>{
             setStocks([...stocks])
+            updateWarehouse()
           })
         })
     }
@@ -439,22 +451,26 @@ export const WarehouseAccordion = (props:warehouseAccordionProps) =>{
   const columns: GridColDef<Stock>[] = [
     { field: 'productId', headerName: 'Product Id', width: 120, editable:false},
     { field: 'name', headerName: 'Name', width: 120, editable:false},
-    { field: 'description', headerName: 'Description', width: 450, editable:false},
+    { field: 'description', headerName: 'Description', width: 1000, editable:false},
     { field: 'quantity', headerName: 'quantity', width: 80, editable:true },
 
   ];
-  const handleChange = (warehouse:Warehouse) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+
+  
+  const  handleChange =  (warehouse:Warehouse) =>  (event: React.SyntheticEvent, isExpanded: boolean) => {
     if (event.target["nodeName"] == "BUTTON")
       return
-    if(!expanded)
+    if(!expanded){
       fetchStock(warehouse.id)
       .then((stocks)=>{
         setStocks([...stocks])
-        setExpanded(true)
       })
-    else 
+      setExpanded(true)
+    }
+    else {
       setStocks([])
       setExpanded(false)
+    }
   };
   return (
     <>
@@ -462,6 +478,7 @@ export const WarehouseAccordion = (props:warehouseAccordionProps) =>{
       warehouse={warehouse}
       open={openAddProduct}
       setOpen={setOpenAddProduct}
+      updateWarehouses={updateWarehouse}
     />
     <Accordion expanded={expanded} onChange={handleChange(warehouse)}>
       <AccordionSummary
