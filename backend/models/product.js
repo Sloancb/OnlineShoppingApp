@@ -19,6 +19,14 @@ module.exports = (sequelize, DataTypes) => {
         price: {
             type: DataTypes.DECIMAL,
             allowNull: false
+        },
+        image_url: {         // 50px x 50px imgs
+            type: DataTypes.STRING, 
+            defaultValue: 'default.png'
+        },
+        image_alt: {        // alt image txt
+            type: DataTypes.STRING,
+            defaultValue: ''
         }
     });
 

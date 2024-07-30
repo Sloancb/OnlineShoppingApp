@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
         capacity: {
             type: DataTypes.INTEGER,
             allowNull: false
+        },
+        control: {
+            type: DataTypes.INTEGER,
+            allowNull: false
         }
     });
 

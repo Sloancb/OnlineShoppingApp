@@ -9,14 +9,15 @@ import CheckoutPage from './pages/Checkout.tsx';
 import NotFoundPage from './pages/404.tsx'
 import TestPage from './tests/testPage.tsx'
 import { HandleMessages } from './styling/components.tsx';
+import StaffHome from './pages/staffHome.tsx';
 
 function App() {
-
   return (
     <HandleMessages>
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Home/>}/>
+            <Route path="/staff" element={<StaffHome/>}/>
             <Route path="/Profile" element={<ProfilePage/>}/>
             <Route path="/Checkout" element={<CheckoutPage/>}/>
             <Route path="/Login" element={<LoginPage/>}/>

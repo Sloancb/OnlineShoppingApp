@@ -13,18 +13,15 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        address: {
+        job_title: {
             type: DataTypes.STRING,
             allowNull: false
         },
         salary: {
-            type: DataTypes.DECIMAL,
-            allowNull: false
-        },
-        job_title: {
             type: DataTypes.STRING,
             allowNull: false
         }
     });
+
     return Staff;
 };

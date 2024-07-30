@@ -1,42 +1,35 @@
 import React, { useState } from 'react';
 import config from '../config.json';
+import {generate} from 'random-words';
 
 import { request } from '../API/Requests.ts';
 import { CircularProgress } from '@mui/material';
 import { testProducts } from './testData.ts';
-import HomeBar, { sendMessage, Product } from '../styling/components.tsx';
+import HomeBar, { sendMessage, Product, Cart } from '../styling/components.tsx';
+import { handDeleteAllProducts, postProduct } from '../API/productAPI.ts';
+import { delay } from '../styling/support.ts';
 
+const genProd = () =>{
+    let prod : Product= {
+        id : Math.random() * 100,
+        name : String(generate(1)),
+        category : String(generate(1)),
+        size : String(generate(1)),
+        brand : String(generate(1)),
+        description : String(generate(20)),
+        price : +(Math.random() % 90 * 100).toPrecision(4)
+    }
+    return prod
+}
 const TestPage: React.FC = () => {
     const [loading, setLoading] = useState(false)
-    const handlePostProduct = () => {
-        console.log("handlePostProduct");
+    const handlePostAllProducts = async () => {
         setLoading(true);
-        for (let prod of testProducts){
-            request<Product>(config.endpoint.products +'/', 'POST', prod)
-                .then((response) => {
-                    console.log("product saved", response)
-                    setLoading(false);
-                })
-                .catch((error) => {
-                    // handle login error
-                    console.log("error", error);
-                    setLoading(false);
-                });
+        for (let i of Array.from(Array(1000).keys())){
+            await postProduct(genProd())
+            await delay(10)
         }
-    }
-    const handDeleteAllProduct = () => {
-        console.log("handleDeleteAllProduct");
-        setLoading(true);
-        request<Product>(config.endpoint.products +'/deleteAll', 'DELETE')
-        .then((response) => {
-            console.log("products deleted", response)
-            setLoading(false);
-        })
-        .catch((error) => {
-            // handle login error
-            console.log("error", error);
-            setLoading(false);
-        });
+        setLoading(false);
     }
 
     const handleCustomerFetchAll = () => {
@@ -67,7 +60,66 @@ const TestPage: React.FC = () => {
                 setLoading(false);
             });
     };
-   
+
+    const handleCreateCart = () => {
+        console.log("handleCreateCart");
+        setLoading(true);
+        request<Cart>(config.endpoint.checkout +'/', 'POST', {customer_id: 1})
+            .then((response) => {
+                // handle successful login
+                console.log("response", response)
+                request<Product>(config.endpoint.checkout +'/checkoutItem', 'POST', {customer_id: 1, product: testProducts[0], quantity: 1})
+                    .then((response) => {
+                        console.log("product added", response)
+                        request<Product>(config.endpoint.checkout +'/checkoutItem', 'POST', {customer_id: 1, product: testProducts[1], quantity: 3})
+                            .then((response) => {
+                                console.log("product added", response)
+                                request<Product>(config.endpoint.checkout +'/checkoutItem', 'POST', {customer_id: 1, product: testProducts[3], quantity: 2})
+                                    .then((response) => {
+                                        console.log("product added", response)
+                                        setLoading(false);
+                                    })
+                                    .catch((error) => {
+                                        // handle login error
+                                        console.log("error", error);
+                                        setLoading(false);
+                                    });
+                            })
+                            .catch((error) => {
+                                // handle login error
+                                console.log("error", error);
+                                setLoading(false);
+                            });
+                    })
+                    .catch((error) => {
+                        // handle login error
+                        console.log("error", error);
+                        setLoading(false);
+                    });
+            })
+            .catch((error) => {
+                // handle login error
+                console.log("error", error);
+                setLoading(false);
+            });
+                
+            
+               
+    }
+    const handleCartDeleteAll = () => {
+        setLoading(true);
+        request(config.endpoint.checkout+'/deleteAll','DELETE')
+            .then((response) => {
+                // handle successful login
+                console.log("response", response)
+                setLoading(false);
+            })
+            .catch((error) => {
+                // handle login error
+                console.log("error", error);
+                setLoading(false);
+            });
+    };
     return (
         <div>
             <HomeBar>
@@ -82,8 +134,13 @@ const TestPage: React.FC = () => {
             </div>
             <br/>
             <div style= {{display:"dflex"}}>
-                <button onClick={handlePostProduct}>handlePostProduct</button>
-                <button onClick={handDeleteAllProduct}>handDeleteAllProduct</button>
+                <button onClick={handlePostAllProducts}>handlePostProduct</button>
+                <button onClick={handDeleteAllProducts}>handDeleteAllProduct</button>
+            </div>
+            <br/>
+            <div style= {{display:"dflex"}}>
+                <button onClick={handleCreateCart}>handleCreateCart</button>
+                <button onClick={handleCartDeleteAll}>handleDeleteAllCart</button>
             </div>
             <br/>
             <div style= {{display:"dflex"}}>
