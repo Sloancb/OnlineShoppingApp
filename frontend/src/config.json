@@ -6,6 +6,10 @@
         "customers": "/api/customers",
         "products": "/api/products",
         "orders": "/api/orders",
-        "staff": "/api/staff"
+        "staff": "/api/staff",
+        "carts": "/api/carts",
+        "checkout": "/api/checkout",
+        "warehouse": "/api/warehouse",
+        "stock": "/api/stock"
     }
 }

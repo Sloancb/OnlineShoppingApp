@@ -12,4 +12,7 @@ router.delete('/deleteAll', productController.deleteAll)
 //router.get('/', jwtAuth, productController.getProducts);
 //router.delete('/deleteAll', jwtAuth, productController.deleteAll);
 
+router.post('/editProduct', productController.editProduct);
+router.delete('/deleteAll', productController.deleteAll);
+router.delete('/delete', productController.deleteProduct)
 module.exports = router;
