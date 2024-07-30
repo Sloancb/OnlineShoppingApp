@@ -8,6 +8,8 @@
         "orders": "/api/orders",
         "staff": "/api/staff",
         "carts": "/api/carts",
-        "checkout": "/api/checkout"
+        "checkout": "/api/checkout",
+        "warehouse": "/api/warehouse",
+        "stock": "/api/stock"
     }
 }

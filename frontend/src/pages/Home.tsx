@@ -69,7 +69,9 @@ function Filter({ input }: SearchBar) {
     request<Product[]>(config.endpoint.products + '/', 'GET')
     .then((response) => {
       setData(response);              // update state with the fetched data
-    });
+    }).catch(()=>{
+    
+    })
   }, []);
 
   // ----- filter data
@@ -96,8 +98,6 @@ function Filter({ input }: SearchBar) {
           console.log("error", error);
           // setLoading(false);
       });
-      console.log(data)
-      console.log(updatedRow)
     };
 
   return (
