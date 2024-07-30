@@ -9,28 +9,32 @@ export interface loginData {
     name : string, 
     password : string
 }
-export async function getLogin(data : loginData){    
+export async function getLogin(data : loginData):Promise<string>{    
     let name = data.name
     let password  = data.password
-    let loggedIn = false
+    let loggedInAs = ""
     await request(config.endpoint.customers + '/login', 'POST', { name, password })
         .then((response) => {
             if(response != null){
-                console.log("response", response)
                 sendMessage('success', "Login Successful")
-                localStorage.setItem("jwt", JSON.stringify(data["token"]))
-                window.sessionStorage.setItem("id", JSON.stringify(response.customer.id))
+                localStorage.setItem("jwt", JSON.stringify(response["token"]))
+                loggedInAs = "customer"
+                window.sessionStorage.setItem("id", JSON.stringify(response.user.id))
+                if(response["adminToken"]) {
+                    localStorage.setItem("adminToken", JSON.stringify(response["adminToken"]))
+                    loggedInAs = "staff"
+                }
             }
             else {
                 console.log("data is null")
             }
-            loggedIn = true
+            
         })
         .catch((errorMessage) => {
             console.log("error", errorMessage);
             sendMessage('error', "Login  Failed:" + errorMessage) 
         });
-    return loggedIn
+    return loggedInAs
 };
 export interface customerData {
     email : string, 
@@ -52,7 +56,7 @@ export async function postCustomer(data : customerData):Promise<boolean>{
         .catch((errorMessage) => {
             // handle login error
             console.log("error", errorMessage);            
-            sendMessage('error', "Regstration  Failed:" + errorMessage)
+            sendMessage('error', "Registration  Failed:" + errorMessage)
         });
     return isRegistered
 };

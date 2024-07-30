@@ -36,10 +36,17 @@
   align-items: 'center';
   justify-content: center;
   padding: 2vh;
+  width: 50wh;
+}
+.align-center {
+  display:"flex";
+  align-items: 'center';
+  justify-content: center;
+  flex-direction: left;
 }
 .Form {
   padding: 1vh;
-  margin: 1vh;
+  margin: 2vh;
 }
 .App-link {
   color: #61dafb;

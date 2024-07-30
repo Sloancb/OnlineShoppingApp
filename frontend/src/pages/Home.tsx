@@ -96,8 +96,6 @@ function Filter({ input }: SearchBar) {
           console.log("error", error);
           // setLoading(false);
       });
-      console.log(data)
-      console.log(updatedRow)
     };
 
   return (

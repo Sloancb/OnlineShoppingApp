@@ -1,8 +1,7 @@
-import { Product } from "../styling/components";
+import { Product } from "../API/productAPI";
 
 export const testProducts: Product[] = [
     {
-        id: 1,
         name: "Product 1",
         category: "Category 1",
         brand: "Brand 1",
@@ -11,7 +10,6 @@ export const testProducts: Product[] = [
         price: 10.99
     },
     {
-        id: 2,
         name: "Product 2",
         category: "Category 2",
         brand: "Brand 2",
@@ -20,7 +18,6 @@ export const testProducts: Product[] = [
         price: 19.99
     },
     {
-        id: 3,
         name: "Product 3",
         category: "Category 3",
         brand: "Brand 3",
@@ -29,7 +26,6 @@ export const testProducts: Product[] = [
         price: 14.99
     },
     {
-        id: 4,
         name: "Product 4",
         category: "Category 4",
         brand: "Brand 4",
@@ -38,7 +34,6 @@ export const testProducts: Product[] = [
         price: 24.99
     },
     {
-        id: 5,
         name: "Product 5",
         category: "Category 5",
         brand: "Brand 5",

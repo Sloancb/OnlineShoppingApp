@@ -1,4 +1,4 @@
-const Sequelize = require('sequelize');
+const Sequelize = require('@sequelize/core');
 const sequelize = require('../config/database');
 
 const Customer = require('./customer')(sequelize, Sequelize);
@@ -11,6 +11,8 @@ const Warehouse = require('./warehouse')(sequelize, Sequelize);
 const CreditCard = require('./creditCard')(sequelize, Sequelize);
 const Address = require('./address')(sequelize, Sequelize);
 const Cart = require('./cart')(sequelize, Sequelize);
+const Staff = require('./staff')(sequelize, Sequelize);
+const Admin = require('./admin')(sequelize, Sequelize);
 
 Customer.hasMany(Order);
 Customer.hasMany(CreditCard);
@@ -35,6 +37,9 @@ module.exports = {
     Stock,
     Warehouse,
     CreditCard,
-    Address
-    Cart
+    Address,
+    Cart,
+    Staff,
+    Warehouse,
+    Admin
 };

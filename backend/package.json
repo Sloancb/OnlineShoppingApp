@@ -7,6 +7,8 @@
         "dev": "nodemon server.js"
     },
     "dependencies": {
+        "@sequelize/core": "^7.0.0-alpha.41",
+        "@sequelize/postgres": "^7.0.0-alpha.41",
         "bcryptjs": "^2.4.3",
         "body-parser": "^1.19.0",
         "cors": "^2.8.5",

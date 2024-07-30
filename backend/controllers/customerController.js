@@ -1,4 +1,4 @@
-const { Customer, Address, CreditCard } = require('../models');
+const { Customer, Address, CreditCard, Staff} = require('../models');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -7,25 +7,34 @@ exports.register = async (req, res) => {
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         const customer = await Customer.create({ name, email, password:hashedPassword });
-        res.status(201).json(customer);
+        return res.status(201).json(customer);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        return res.status(500).json({ error: error.message });
     }
 };
 
 exports.login = async (req, res) => {
     const { name, password } = req.body;
+    let isStaff = false;
+    
     try {
-        const customer = await Customer.findOne({where : {name : name}})
-        if (!customer) {
-            return res.status(404).json({ error: 'Customer not found' });
-        } 
-        const isMatch = await bcrypt.compare(password, customer.dataValues.password)
+        let user = await Customer.findOne({where : {name : name}})
+        if (!user) {
+            user = await Staff.findOne({where : {name : name}})
+            isStaff = true
+            if (! user)
+                return res.status(404).json({ error: 'User not found' });
+        }
+        const isMatch = await bcrypt.compare(password, user.password)
         if (!isMatch) { 
             return res.status(401).json({ error: 'Invalid credentials' });
         }
-        const token = jwt.sign({ id: customer.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.json({ token, customer });
+        const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const adminToken  = jwt.sign({ id: user.id }, process.env.ADMIN_SECRET, { expiresIn: '1h' });
+        if (isStaff)
+            res.json({ token, adminToken, user})
+        else  
+            res.json({ token, user });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
