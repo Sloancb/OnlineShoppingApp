@@ -59,6 +59,23 @@ exports.fetchByName = async (req, res) => {
     }
 };
 
+exports.fetchbyId =  async (req, res) => {
+    const { id } = req.body;
+    try {
+        // Address.create({ customer_id: 2, address: '123 Main St' }); <-- Just for testing/Getting one in system
+        // CreditCard.create({ customer_id: 2, card_number: '123456789012', expiry_date: '2023-12-31', billing_address: '123 Main St' }); // <-- Just for testing/Getting one in system
+        const customer = await Customer.findOne({ where: { id: id} });
+        if (!customer) {
+            return res.status(404).json({ error: 'Customer not found' });
+        }
+        const address = await Address.findOne({ where: { customer_id: customer.id } });
+        const creditCards = await CreditCard.findAll({ where: { customer_id: customer.id } });
+        console.log('credit Cards: ', creditCards);
+        res.json({ customer, address, creditCards });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
 
 exports.update = async (req, res) => {
     console.log('Update Customer');

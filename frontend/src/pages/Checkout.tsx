@@ -11,9 +11,6 @@ import ShoppingCartRounded from '@mui/icons-material/ShoppingCartRounded';
 const columns: GridColDef[] = [
     { field: 'name', headerName: 'Name', width: 150, editable:true },
     { field: 'category', headerName: 'Category', width: 150, editable:true },
-    { field: 'brand', headerName: 'Brand', width: 150, editable:true },
-    { field: 'size', headerName: 'Size', width: 150, editable:true },
-    { field: 'description', headerName: 'Description', width: 150, editable:true },
     { field: 'price', headerName: 'Price', width: 150, editable:true },
     // quantity input 
     { field: 'quantity',
@@ -54,6 +51,7 @@ const columns: GridColDef[] = [
       ];
       }
     },
+    { field: 'Total'}
   ];
 
   const ProfilePage: React.FC = () => {
@@ -101,8 +99,9 @@ const columns: GridColDef[] = [
                         disableRowSelectionOnClick
                     />
                     </Box>
-                    </div>
-                <Button onClick={()=>{setPageView("payment")}}>Click mE1</Button>
+                    <Button onClick={()=>{setPageView("payment")}}>Click mE1</Button>
+                </div>
+                
             </>
             :
             <>

@@ -7,6 +7,7 @@ router.post('/login', customerController.login);
 
 router.get('/fetchAll', customerController.fetchAll);
 router.post('/fetchByName', customerController.fetchByName);
+router.post('/fetchById/:customer_id', customerController.fetchById);
 router.post('/update', customerController.update);
 router.post('/createCreditCard', customerController.createCreditCard);
 

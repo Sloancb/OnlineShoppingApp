@@ -67,7 +67,10 @@ export const HandleLogout= (navigate: NavigateFunction)=>{
 export interface cartItem {
     product_id : number,
     customer_id : number,
-    quantity : number
+    quantity : number,
+    name: string,
+    category: string,
+    price: number
 };
 
 export async function getCartItemCount(): Promise<number> {
@@ -104,7 +107,7 @@ export async function handleAddToCart(product: Product, quantity: number) {
         }
         const current_customer_id = parseInt(c_id, 10);
 
-        const cart_item: cartItem = {
+        const cart_item = {
             product_id: product.id,
             customer_id: current_customer_id,
             quantity: quantity
@@ -120,27 +123,50 @@ export async function handleAddToCart(product: Product, quantity: number) {
     }
 };
 
-export async function getCartItems(){
+export async function getCartItems(): Promise<cartItem[]> {
+    let acc : cartItem[] = [];
     try {
         let c_id = window.sessionStorage.getItem('id');     // customer id
         if (!c_id) {
             sendMessage('error', "Account not logged in");
-            return -1;
         }
         const customerId = parseInt(c_id, 10);
         
-        const response = await request<cartItem[]>(
-            `${config.endpoint.carts}/getItems/${customerId}`, 'GET'
-        );
+        await request<cartItem[]>(
+            `${config.endpoint.carts}/getItemsInfo/${customerId}`, 'GET'
+        ).then((response) => {
+            if (!response) {
+                sendMessage('error', "No Cart Items");
+            }
+            acc = response;
+        })
 
-        if (!response) {
-            return -1;
-        }
-
-        return response;
     } catch (error) {
         sendMessage('error', "Failed to retrieve cart");
-        return -1;
     }
+    return acc;
 };
 
+export async function getCustomerDetails(){
+    let acc = [];
+    try {
+        let c_id = window.sessionStorage.getItem('id');     // customer id
+        if (!c_id) {
+            sendMessage('error', "Account not logged in");
+        }
+        const customerId = parseInt(c_id, 10);
+        
+        await request(
+            `${config.endpoint.carts}/fetchByID/${customerId}`, 'GET'
+        ).then((response) => {
+            if (!response) {
+                sendMessage('error', "Can't get info on credit cards and addresses");
+            }
+            acc = response;
+        })
+
+    } catch (error) {
+        sendMessage('error', "Failed to retrieve customer info");
+    }
+    return acc;
+}
