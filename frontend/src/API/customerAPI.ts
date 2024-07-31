@@ -209,6 +209,32 @@ export async function getCartItems(): Promise<cartItem[]> {
     return acc;
 };
 
+export async function getCartTotalValue(): Promise<number> {
+    let total_amount = 0.0;
+    try {
+        let c_id = window.sessionStorage.getItem('id');     // customer id
+        if (!c_id) {
+            sendMessage('error', "Account not logged in");
+        }
+        const customerId = parseInt(c_id, 10);
+        
+        await request<cartItem[]>(
+            `${config.endpoint.carts}/getItemsInfo/${customerId}`, 'GET'
+        ).then((response) => {
+            if (!response) {
+                sendMessage('error', "No Cart Items");
+            }
+            for (let cartItem in response){
+                total_amount += response[cartItem].quantity * response[cartItem].price;
+                console.log(total_amount);
+            }
+        })
+
+    } catch (error) {
+        sendMessage('error', "Failed to retrieve cart");
+    }
+    return total_amount;
+};
 export async function getCustomerDetails(){
     let acc = [];
     try {
@@ -233,7 +259,7 @@ export async function getCustomerDetails(){
     return acc;
 }
 
-export async function createOrder(delivery_type: string, creditCard: CreditCard, cartItems: cartItem[]){
+export async function createOrder(delivery_type: string, creditCard: CreditCard, cartItems: cartItem[], total_amount:number){
     let orderData = []
     try {
         let delivery_price = 4.99;
@@ -255,7 +281,7 @@ export async function createOrder(delivery_type: string, creditCard: CreditCard,
         }
         
         const customerId = parseInt(c_id, 10);
-        const orderResponse = await request(config.endpoint.orders + '/', 'POST', {customer_id: customerId, products: cartItems, total_amount: 100.00, delivery_plan_id: deliveryPlanResponse["id"], payment_method_id: creditCard["id"]});
+        const orderResponse = await request(config.endpoint.orders + '/', 'POST', {customer_id: customerId, products: cartItems, total_amount: total_amount, delivery_plan_id: deliveryPlanResponse["id"], payment_method_id: creditCard["id"]});
         console.log("Order Successfully created!");
         console.log("response", orderResponse);
         orderData = orderResponse;

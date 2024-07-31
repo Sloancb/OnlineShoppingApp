@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { request } from '../API/Requests.ts';
-import { handleAddToCart, cartItem, getCartItemCount, getCartItems, fetchByName, createOrder} from '../API/customerAPI.ts';
+import { handleAddToCart, cartItem, getCartItemCount, getCartItems, getCartTotalValue, fetchByName, createOrder} from '../API/customerAPI.ts';
 import config from '../config.json';
 import { Box, TextField, Button} from '@mui/material';                // UI component for layout
 import { Select } from '@mui/base/Select';
@@ -109,14 +109,13 @@ const columns: GridColDef[] = [
         } 
         else {
           setLoading(true);
-          createOrder(delivery, payment, data)
+          createOrder(delivery, payment, data, orderTotal)
           .then((orderData) => {
             try{
               console.log("orderData", orderData);
               setOrderId(orderData.id);
               setOrderDate(orderData.order_date);
-              setOrderTotal(orderData.total_amount);
-              //
+              setPageView("confirmation");
               setLoading(false);
             } catch (error) {
               sendMessage("error", "An error has occured! Please try again!");
@@ -159,8 +158,15 @@ const columns: GridColDef[] = [
 
     useEffect(()=>{
       HandleCustomerFetchByName();
+      getCartTotalValue()
+      .then((response)=>{
+        setOrderTotal(response);
+      })
       },[])
     
+    useEffect(()=>{
+      console.log("Total Amount: ", orderTotal);
+    })
     useEffect(()=>{
       if(delivery == "Standard"){
         setShipDate(new Date(new Date().setDate(new Date().getDate() + 1)).toLocaleString());
@@ -180,7 +186,6 @@ const columns: GridColDef[] = [
         console.log("At least one is null. Please wait... ", orderId, orderDate, orderTotal)
       } else {
         console.log("Everything is Filled!! OrderId:", orderId, " orderDate: ",orderDate, " orderTotal: ", orderTotal)
-        setPageView("confirmation");
       }
     },[orderId, orderDate, orderTotal])
 
@@ -207,8 +212,10 @@ const columns: GridColDef[] = [
                         checkboxSelection
                         disableRowSelectionOnClick
                     />
+                    <Button onClick={()=>{setPageView("payment")}}>Check Out</Button>
+                    <p>Total Amount: {orderTotal}</p>
                     </Box>
-                    <Button onClick={()=>{setPageView("payment")}}>Click mE1</Button>
+                    
                 </div>
                 
             </>
