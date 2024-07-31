@@ -39,14 +39,16 @@ export async function getLogin(data : loginData):Promise<string>{
 export interface customerData {
     email : string, 
     name : string, 
-    password : string
+    password : string,
+    address : string
 }
 export async function postCustomer(data : customerData):Promise<boolean>{
     let email = data.email
     let name = data.name
     let password  = data.password
+    let address = data.address
     let isRegistered = false
-    await request(config.endpoint.customers +'/Register', 'POST', { name, email, password })
+    await request(config.endpoint.customers +'/Register', 'POST', { name, email, password, address })
         .then((response) => {
             // handle successful login
             console.log("response", response)
