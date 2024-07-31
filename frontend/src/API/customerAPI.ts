@@ -150,8 +150,14 @@ export async function getCartItemCount(): Promise<number> {
         if (!response) {
             return -1;
         }
-
-        const itemCount = response.length;
+        
+        let itemCount = -1;
+        try{
+            itemCount = response.reduce((a,b)=>{return a + b.quantity},0)
+        } 
+        catch{
+            itemCount = -1
+        }
         return itemCount;
     } catch (error) {
         sendMessage('error', "Failed to count");
@@ -161,6 +167,7 @@ export async function getCartItemCount(): Promise<number> {
 
 export async function handleAddToCart(product: Product, quantity: number) {
     try {
+        console.log("ran 2")
         let c_id = window.sessionStorage.getItem('id');     // customer id
         if (!c_id) {
             sendMessage('error', "Account not logged in");
@@ -175,9 +182,12 @@ export async function handleAddToCart(product: Product, quantity: number) {
         };
 
         // add to cart
-        request<cartItem>(config.endpoint.carts +'/addToCart', 'POST', cart_item);
-
-        sendMessage('success', `Added ${quantity} ${product.name}(s) to cart!`)
+        await request<cartItem>(config.endpoint.carts +'/addToCart', 'POST', cart_item)
+        .then(()=>{
+            const event = new CustomEvent('updateCart', {bubbles:true})
+            window.dispatchEvent(event)
+            sendMessage('success', `Added ${quantity} ${product.name}(s) to cart!`)
+        }).catch()
     } catch (error) {
         sendMessage('error', "Failed to add item to cart");
         console.error('Error adding to cart: ', error);
