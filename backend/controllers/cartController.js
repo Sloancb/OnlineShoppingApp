@@ -112,6 +112,7 @@ exports.deleteCartItem = async (req, res) => {
 
 // --- DELETE all cart items for customer_id
 exports.emptyCart = async (req, res) => {
+    const { customer_id } = req.body;
   try {
       const cart_item = await Cart.findAll({ where: { customer_id } });
       if (!cart_item) {

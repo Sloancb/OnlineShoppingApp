@@ -13,6 +13,8 @@ const Address = require('./address')(sequelize, Sequelize);
 const Cart = require('./cart')(sequelize, Sequelize);
 const Staff = require('./staff')(sequelize, Sequelize);
 const Admin = require('./admin')(sequelize, Sequelize);
+const DeliveryPlan = require('./deliveryPlans')(sequelize, Sequelize)
+const OrderItems = require('./orderItems')(sequelize, Sequelize)
 
 Customer.hasMany(Order);
 Customer.hasMany(CreditCard);
@@ -21,8 +23,8 @@ Order.belongsTo(Customer);
 Product.belongsToMany(Warehouse, { through: Stock });
 Warehouse.belongsToMany(Product, { through: Stock });
 
-Order.belongsToMany(Product, { through: 'OrderItems' });
-Product.belongsToMany(Order, { through: 'OrderItems' });
+Order.belongsToMany(Product, { through: OrderItems });
+Product.belongsToMany(Order, { through: OrderItems });
 
 Customer.hasMany(Cart, { foreignKey: 'customer_id' });
 Cart.belongsTo(Customer, { foreignKey: 'customer_id' });
@@ -41,5 +43,7 @@ module.exports = {
     Cart,
     Staff,
     Warehouse,
-    Admin
+    Admin,
+    DeliveryPlan,
+    OrderItems
 };
