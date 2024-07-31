@@ -44,6 +44,10 @@
   justify-content: center;
   flex-direction: left;
 }
+.align-right {
+  /* flex-direction: right !important; */
+  margin-left: auto !important;
+}
 .Form {
   padding: 1vh;
   margin: 2vh;

@@ -63,7 +63,7 @@ export default function HomeBar({children}) {
               <Grid  item xs>
                   <div style ={{textAlign:'right'}}>
                     <IconButton onClick={()=>{navigate('/Checkout')}}>
-                    <CartBadge />
+                      <CartBadge />
                     </IconButton>
                     <IconButton id='Account-button' onClick={handleMenu}>
                       <PersonIcon fontSize ={"large"}/>
@@ -82,26 +82,29 @@ export default function HomeBar({children}) {
 // shopping cart badge
 const CartBadge = () => {
   const [itemCount, setItemCount] = useState(0);
-  useEffect(() => {
-      const fetchCartItemCount = async () => {
-          try {
-              const count = await getCartItemCount();
-              if (count !== -1) {
-                  setItemCount(count);
-              } else {
-                  sendMessage('error', "Failed to fetch cart item count");
-              }
-          } catch (error) {
-              sendMessage('error', `Error: ${error.message}`);
-              console.error("Error fetching cart item count:", error);
-          }
-      };
+  const fetchCartItemCount = async () => {
+    console.log("fetching cart")
+    try {
+        const count = await getCartItemCount();
+        if (count !== -1) {
+            setItemCount(count);
+        } else {
+            sendMessage('error', "Failed to fetch cart item count");
+        }
+    } catch (error) {
+        sendMessage('error', `Error: ${error.message}`);
+        console.error("Error fetching cart item count:", error);
+    }
+    window.addEventListener('updateCart', (e)=>(fetchCartItemCount()), {once:true});  
+};  
 
-      fetchCartItemCount();
-  }, []);
+  useEffect(()=>{
+    console.log("called twice")
+    fetchCartItemCount();
+  },[])
 
   return (
-      <Badge badgeContent={itemCount} color="secondary">
+      <Badge badgeContent={itemCount} color="secondary">  
           <ShoppingCartIcon  fontSize ={"large"}/>
       </Badge>
   );
