@@ -5,7 +5,7 @@ import config from '../config.json';
 import { Box, TextField, Button, Container, Grid, Menu, FormControl, InputLabel, MenuItem, Select, Typography} from '@mui/material';                // UI component for layout
 import { Option } from '@mui/base/Option';
 import { DataGrid, GridColDef, GridRowParams } from '@mui/x-data-grid';
-import { EnsureLoggedIn, Product, SearchBar, QuantityInput, CreditCard, sendMessage, Paper } from '../styling/components.tsx'
+import { EnsureLoggedIn, Product, SearchBar, QuantityInput, CreditCard, sendMessage, Paper, EnsureNotAdmin } from '../styling/components.tsx'
 import HomeBar from '../styling/components.tsx';
 import ShoppingCartRounded from '@mui/icons-material/ShoppingCartRounded';
 import { useNavigate } from 'react-router-dom';
@@ -212,6 +212,7 @@ const columns: GridColDef[] = [
 
         return (
         <EnsureLoggedIn>
+          <EnsureNotAdmin>
             <HomeBar>
             <Container maxWidth="lg">
             <>
@@ -219,7 +220,7 @@ const columns: GridColDef[] = [
             <>
                 <h1>Checkout page</h1>
                 <div className="content">
-                <div style={{ maxHeight: '60vh', width: '100%' }}>
+                <div style={{ height: '60vh', width: '100%' }}>
                     <DataGrid
                       rows={data}
                       columns={columns}
@@ -320,6 +321,8 @@ const columns: GridColDef[] = [
             </>
               </Container>
             </HomeBar>
+            
+          </EnsureNotAdmin>
         </EnsureLoggedIn>
         );
 }

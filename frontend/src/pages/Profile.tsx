@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 
 import { TextField, Button } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import HomeBar, { EnsureLoggedIn, sendMessage, CreditCard, CreditCardForm } from '../styling/components.tsx';
+import HomeBar, { EnsureLoggedIn, sendMessage, CreditCard, CreditCardForm, EnsureNotAdmin } from '../styling/components.tsx';
 import { isEqual } from '../styling/support.ts';
 import {fetchByName, updateCustomer } from '../API/customerAPI.ts';
 
@@ -115,6 +115,7 @@ function ProfilePage() {
 
     return (
     <EnsureLoggedIn>
+        <EnsureNotAdmin>
         <HomeBar>
             
                 <div className="container">
@@ -199,6 +200,7 @@ function ProfilePage() {
                 <br/>
                 </div>
         </HomeBar>
+        </EnsureNotAdmin>
     </EnsureLoggedIn>
     );
 }

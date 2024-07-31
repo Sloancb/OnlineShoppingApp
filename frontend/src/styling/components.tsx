@@ -45,7 +45,7 @@ export default function HomeBar({children}) {
         open={open}
         onClose={handleClose}
       >
-        <MenuItem onClick={()=>{navigate('/Profile')}}> My account</MenuItem>
+        {!adminToken && <MenuItem onClick={()=>{navigate('/Profile')}}> My account</MenuItem>}
         <MenuItem onClick={()=>{HandleLogout(navigate)}}>Logout</MenuItem>
         {adminToken && adminToken != "undefined" && <MenuItem onClick={()=>{navigate('/staff')}}>Staff Page</MenuItem> }
       </Menu>
@@ -62,9 +62,9 @@ export default function HomeBar({children}) {
               </Grid>
               <Grid  item xs>
                   <div style ={{textAlign:'right'}}>
-                    <IconButton onClick={()=>{navigate('/Checkout')}}>
+                  {!adminToken && <IconButton onClick={()=>{navigate('/Checkout')}}>
                       <CartBadge />
-                    </IconButton>
+                    </IconButton>}
                     <IconButton id='Account-button' onClick={handleMenu}>
                       <PersonIcon fontSize ={"large"}/>
                     </IconButton>
@@ -157,12 +157,12 @@ export const EnsureNotAdmin = ({children}) =>{
   const navigate = useNavigate();
   React.useEffect(()=>{
     console.log(adminToken)
-    if(adminToken || adminToken != "undefined" ){
+    if(adminToken && adminToken != "undefined" ){
       navigate('/')
       sendMessage("warning", "Invalid Permission!")
     }
   })
-  if(!adminToken || adminToken == "undefined" )
+  if(!adminToken || adminToken == "undefined"  )
     return (
       <div>
         {children}

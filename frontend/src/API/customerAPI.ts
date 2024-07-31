@@ -17,6 +17,7 @@ export async function getLogin(data : loginData):Promise<string>{
     await request(config.endpoint.customers + '/login', 'POST', { name, password })
         .then((response) => {
             if(response != null){
+                console.log(response)
                 sendMessage('success', "Login Successful")
                 localStorage.setItem("jwt", JSON.stringify(response["token"]))
                 loggedInAs = "customer"
