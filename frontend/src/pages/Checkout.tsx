@@ -104,9 +104,9 @@ const columns: GridColDef[] = [
         console.log('Delivery Selected: ', delivery)
         console.log('Card Selected :', paymentIndex);
         // console.log('Card Selected :', cardData[paymentIndex as number]);
-        if(paymentIndex == -1){
+        if(!paymentIndex || paymentIndex == -1 ||  !cardData[paymentIndex]) {
           sendMessage("error", "Please select a credit card!");
-        } else if (delivery == '' || delivery == "None"){
+        } else if (!delivery || delivery == '' || delivery == "None"){
           sendMessage("error", "Please select a Delivery Plan!");
         } 
         else {
@@ -156,27 +156,20 @@ const columns: GridColDef[] = [
         return (
         <EnsureLoggedIn>
             <HomeBar>
-            <Container maxWidth="md">
+            <Container maxWidth="lg">
             <>
             {pageView == "checkout" &&
             <>
                 <h1>Checkout page</h1>
                 <div className="content">
-                  <DataGrid
-                    rows={data}
-                    columns={columns}
-                    autoHeight
-                    initialState={{
-                    pagination: {
-                        paginationModel: {
-                        pageSize: 10,
-                        },
-                    },
-                    }}
-                    pageSizeOptions={[5]}
-                    checkboxSelection
-                    disableRowSelectionOnClick
-                />
+                <div style={{ height: '60vh', width: '100%' }}>
+                    <DataGrid
+                      rows={data}
+                      columns={columns}
+                      hideFooter
+                      disableRowSelectionOnClick
+                  />
+                </div>
                 <Grid
                   container
                   direction="row"

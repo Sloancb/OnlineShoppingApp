@@ -104,7 +104,7 @@ const CartBadge = () => {
   },[])
 
   return (
-      <Badge badgeContent={itemCount} color="secondary">
+      <Badge badgeContent={itemCount} color="secondary">  
           <ShoppingCartIcon  fontSize ={"large"}/>
       </Badge>
   );
