@@ -61,41 +61,25 @@ const TestPage: React.FC = () => {
             });
     };
 
-    const handleCreateCart = () => {
+    const handleCreateCart = async () => {
         console.log("handleCreateCart");
         setLoading(true);
         request<Cart>(config.endpoint.checkout +'/', 'POST', {customer_id: 1})
-            .then((response) => {
+            .then(async (response) => {
                 // handle successful login
-                console.log("response", response)
-                request<Product>(config.endpoint.checkout +'/checkoutItem', 'POST', {customer_id: 1, product: testProducts[0], quantity: 1})
+                console.log("response", response);
+                for (let product of testProducts){
+                    await request<Product>(config.endpoint.checkout +'/checkoutItem', 'POST', {customer_id: 1, product: product, quantity: 1})
                     .then((response) => {
                         console.log("product added", response)
-                        request<Product>(config.endpoint.checkout +'/checkoutItem', 'POST', {customer_id: 1, product: testProducts[1], quantity: 3})
-                            .then((response) => {
-                                console.log("product added", response)
-                                request<Product>(config.endpoint.checkout +'/checkoutItem', 'POST', {customer_id: 1, product: testProducts[3], quantity: 2})
-                                    .then((response) => {
-                                        console.log("product added", response)
-                                        setLoading(false);
-                                    })
-                                    .catch((error) => {
-                                        // handle login error
-                                        console.log("error", error);
-                                        setLoading(false);
-                                    });
-                            })
-                            .catch((error) => {
-                                // handle login error
-                                console.log("error", error);
-                                setLoading(false);
-                            });
+                        setLoading(false);
                     })
                     .catch((error) => {
                         // handle login error
                         console.log("error", error);
                         setLoading(false);
                     });
+                }
             })
             .catch((error) => {
                 // handle login error

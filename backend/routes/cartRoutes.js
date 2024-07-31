@@ -7,6 +7,7 @@ router.post('/addToCart', cartController.addToCart);		// add / update item for i
 router.post('/update', cartController.updateCartItem);		// update item for id
 
 router.get('/getItems/:customer_id', cartController.getCartItems);		// get all items for id
+router.get('/getItemsInfo/:customer_id', cartController.getCartItemsInfo);		// get all items info for id
 router.get('/getAll', cartController.getCart);				// get all
 
 router.delete('/deleteItem', cartController.deleteCartItem);	// delete item

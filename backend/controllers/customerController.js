@@ -68,7 +68,6 @@ exports.fetchByName = async (req, res) => {
     }
 };
 
-
 exports.update = async (req, res) => {
     console.log('Update Customer');
     const { customer_id, name, email, address, creditCards} = req.body;

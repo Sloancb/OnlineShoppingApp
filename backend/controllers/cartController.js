@@ -54,7 +54,26 @@ exports.getCartItems = async (req, res) => {
         res.status(500).json({ error: 'Failed to retrieve cart items' });
     }
 };
-  
+
+// --- GET cart items info for customer_id
+exports.getCartItemsInfo = async (req, res) => {
+    const customerId = req.params.customer_id;
+    try {
+        const cartItems = await Cart.findAll({
+            where: { customer_id: customerId }
+        });
+        let cartItemsInfo =[]
+        for (let item of cartItems){
+            const product = await Product.findOne({where : {id : item.product_id}})
+            cartItemsInfo.push({...item.dataValues, name:product.name, category:product.category, price:product.price})
+        }
+        res.json(cartItemsInfo);
+    } catch (error) {
+        console.error("Error fetching cart items:", error);
+        res.status(500).json({ error: 'Failed to retrieve cart items' });
+    }
+};
+
 // --- UPDATE cart item
 exports.updateCartItem = async (req, res) => {
     console.log('Update Cart');
@@ -93,6 +112,7 @@ exports.deleteCartItem = async (req, res) => {
 
 // --- DELETE all cart items for customer_id
 exports.emptyCart = async (req, res) => {
+    const { customer_id } = req.body;
   try {
       const cart_item = await Cart.findAll({ where: { customer_id } });
       if (!cart_item) {
@@ -127,3 +147,4 @@ exports.deleteAll = async (req, res) => {
       res.status(500).json({ error: error.message });
   }
 }
+
