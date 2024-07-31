@@ -4,6 +4,7 @@ import { NavigateFunction } from "react-router-dom";
 import { sendMessage, Product, CreditCard } from '../styling/components.tsx';
 import customer from '../../../backend/models/customer.js';
 import { all } from 'axios';
+import order from '../../../backend/models/order.js';
 
 export interface loginData {
     name : string, 
@@ -233,50 +234,39 @@ export async function getCustomerDetails(){
 }
 
 export async function createOrder(delivery_type: string, creditCard: CreditCard, cartItems: cartItem[]){
+    let orderData = []
     try {
         let delivery_price = 4.99;
-        let delivery_date = '8/3/2024';
-        let ship_date = '8/2/2024';
+        let delivery_date = new Date(new Date().setDate(new Date().getDate() + 2));
+        let ship_date = new Date(new Date().setDate(new Date().getDate() + 1));
         if(delivery_type == 'Express'){
             delivery_price = 9.99;
-            delivery_date = '8/2/2024';
-            ship_date = '8/1/2024';
+            delivery_date = ship_date;
+            ship_date = new Date();
         }
-        request(config.endpoint.orders + '/deliveryPlan','POST', {delivery_type, delivery_price, delivery_date, ship_date})
-        .then((response) => {
-            console.log("Create Delivery Plan Successful")
-            console.log("response", response)
+        const deliveryPlanResponse = await request(config.endpoint.orders + '/deliveryPlan', 'POST', {delivery_type, delivery_price, delivery_date, ship_date});
+        console.log("Create Delivery Plan Successful");
+        console.log("response", deliveryPlanResponse);
 
-            let c_id = window.sessionStorage.getItem('id');     // customer id
-            if (!c_id) {
-                sendMessage('error', "Account not logged in");
-            }
-            const customerId = parseInt(c_id, 10);
-            request(config.endpoint.orders + '/','POST', {customer_id: customerId, products: cartItems, total_amount: 100.00, delivery_plan_id: response["id"], payment_method_id: creditCard["id"]})
-                .then((response) => {
-                    console.log("Order Successfully created!")
-                    console.log("response", response)
-                    request(config.endpoint.carts + '/empty','DELETE', {customer_id: customerId})
-                        .then((response) => {
-                            console.log("Cart Empty!")
-                            console.log("response", response)
-                        })
-                        .catch((error) => {
-                            // handle add error
-                            console.log("error", error);
-                        });
-                    
-                })
-                .catch((error) => {
-                    // handle add error
-                    console.log("error", error);
-                });
-            })
-        .catch((error) => {
-            // handle add error
-            console.log("error", error);
-        });
+        let c_id = window.sessionStorage.getItem('id'); // customer id
+        if (!c_id) {
+            sendMessage('error', "Account not logged in");
+            return;
+        }
+        
+        const customerId = parseInt(c_id, 10);
+        const orderResponse = await request(config.endpoint.orders + '/', 'POST', {customer_id: customerId, products: cartItems, total_amount: 100.00, delivery_plan_id: deliveryPlanResponse["id"], payment_method_id: creditCard["id"]});
+        console.log("Order Successfully created!");
+        console.log("response", orderResponse);
+        orderData = orderResponse;
+
+        const emptyCartResponse = await request(config.endpoint.carts + '/empty', 'DELETE', {customer_id: customerId});
+        console.log("Cart Empty!");
+        console.log("response", emptyCartResponse);
+        
+        return orderData;
     } catch(error){
         console.log("error", error);
     }
+    //return orderData
 }

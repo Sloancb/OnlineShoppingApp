@@ -66,6 +66,11 @@ const columns: GridColDef[] = [
     const [payment,setPayment] = useState<CreditCard>();
     const [delivery,setDelivery] = useState('');
     //const [data, setData] = useState<Product[]>([]);
+    const [orderId, setOrderId] = useState(0);
+    const [orderDate,setOrderDate] = useState('');
+    const [orderTotal, setOrderTotal] = useState(0.00);
+    const [shipDate, setShipDate] = useState('');
+    const [deliveryDate, setDeliveryDate] = useState('');
 
     const HandleCustomerFetchByName = () => {
       setLoading(true);
@@ -106,9 +111,19 @@ const columns: GridColDef[] = [
           setLoading(true);
           createOrder(delivery, payment, data)
           .then((orderData) => {
-            console.log("orderData", orderData);
-            setPageView("confirmation");
-            setLoading(false);
+            try{
+              console.log("orderData", orderData);
+              setOrderId(orderData.id);
+              setOrderDate(orderData.order_date);
+              setOrderTotal(orderData.total_amount);
+              //
+              setLoading(false);
+            } catch (error) {
+              sendMessage("error", "An error has occured! Please try again!");
+              console.log("error", error);
+              setLoading(false);
+            }
+            
           })
           .catch((error) => {
               sendMessage("error", error);
@@ -145,6 +160,29 @@ const columns: GridColDef[] = [
     useEffect(()=>{
       HandleCustomerFetchByName();
       },[])
+    
+    useEffect(()=>{
+      if(delivery == "Standard"){
+        setShipDate(new Date(new Date().setDate(new Date().getDate() + 1)).toLocaleString());
+        setDeliveryDate(new Date(new Date().setDate(new Date().getDate() + 2)).toLocaleString());
+        console.log("Ship Date: ", shipDate);
+        console.log("Delivery Date: ", deliveryDate);
+      } else if (delivery == "Express"){
+        setShipDate(new Date(new Date().getTime() + 8 * 60 * 60 * 1000).toLocaleString());
+        setDeliveryDate(new Date(new Date().setDate(new Date().getDate() + 1)).toLocaleString());
+        console.log("Ship Date: ", shipDate);
+        console.log("Delivery Date: ", deliveryDate);
+      }
+      },[delivery])
+
+    useEffect(()=>{
+      if(orderId == null || orderDate == null || orderTotal == null || orderId == 0 || orderDate == '' || orderTotal == 0){
+        console.log("At least one is null. Please wait... ", orderId, orderDate, orderTotal)
+      } else {
+        console.log("Everything is Filled!! OrderId:", orderId, " orderDate: ",orderDate, " orderTotal: ", orderTotal)
+        setPageView("confirmation");
+      }
+    },[orderId, orderDate, orderTotal])
 
         return (
         <EnsureLoggedIn>
@@ -182,6 +220,7 @@ const columns: GridColDef[] = [
                 <form onSubmit={handleSubmit}>
                 <h4>Payment Card</h4>
                   <Select
+                    sx={{ backgroundColor:'grey' }}
                     defaultValue={0}
                     renderValue={(option: SelectOption<number> | null) => {
                       if (option == null || option.value === 0) {
@@ -201,6 +240,7 @@ const columns: GridColDef[] = [
                   </Select>
                   <h4>Delivery Plan</h4>
                   <Select
+                    sx={{ backgroundColor:'grey' }}
                     defaultValue={"None"}
                     onChange={(event, value) => setDelivery(value)}
                   >
@@ -209,12 +249,21 @@ const columns: GridColDef[] = [
                     <Option value={"Express"}>Express: $9.99</Option>
                     
                   </Select>
+                  <p>Estimated Ship Date: {shipDate.toLocaleString()}</p>
+                  <p>Estimated Delivery Date: {deliveryDate.toLocaleString()}</p>
                   <Button type = "submit">Confirm Order</Button>
                 </form>
                 
             </>
             :
-            <h2>Confirmation page</h2>
+            <>
+              <h2>Confirmation page</h2>
+              <p>Order ID: {orderId}</p>
+              <p>Order Date: {orderDate}</p>
+              <p>Order Total: {orderTotal}</p>
+              <p>Ship Date: {shipDate}</p>
+              <p>Delivery Date: {deliveryDate}</p>
+            </>
             }
             </>
                 }
