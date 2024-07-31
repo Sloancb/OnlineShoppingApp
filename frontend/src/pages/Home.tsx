@@ -38,8 +38,8 @@ const columns: GridColDef[] = [
     type: 'actions',
     width: 200,
     getActions: (params: GridRowParams<Product>) => {
-      const imageURL = `${process.env.PUBLIC_URL}/${params.row.image_url}`;
-      //const imageURL = `https://via.placeholder.com/50x50/000000/000000`;
+      //const imageURL = `${process.env.PUBLIC_URL}/${params.row.image_url}`;
+      const imageURL = `https://via.placeholder.com/50x50/000000/000000`;
         return [
           <>
           <img
@@ -69,7 +69,9 @@ function Filter({ input }: SearchBar) {
     request<Product[]>(config.endpoint.products + '/', 'GET')
     .then((response) => {
       setData(response);              // update state with the fetched data
-    });
+    }).catch(()=>{
+    
+    })
   }, []);
 
   // ----- filter data
