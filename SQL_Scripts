@@ -1,0 +1,158 @@
+-- Drop existing tables if they exist
+DROP TABLE IF EXISTS public."OrderItems";
+DROP TABLE IF EXISTS public."Addresses";
+DROP TABLE IF EXISTS public."Carts";
+DROP TABLE IF EXISTS public."Checkouts";
+DROP TABLE IF EXISTS public."CheckoutItems";
+DROP TABLE IF EXISTS public."DeliveryPlans";
+DROP TABLE IF EXISTS public."CreditCards";
+DROP TABLE IF EXISTS public."Orders";
+DROP TABLE IF EXISTS public."Stocks";
+DROP TABLE IF EXISTS public."Warehouses";
+DROP TABLE IF EXISTS public."Products";
+DROP TABLE IF EXISTS public."Customers";
+DROP TABLE IF EXISTS public."Staffs";
+DROP TABLE IF EXISTS public."Admins";
+
+-- Create Admin table with initial record
+CREATE TABLE public."Admins" (
+    id SERIAL PRIMARY KEY,
+    code VARCHAR(255) NOT NULL UNIQUE
+);
+
+INSERT INTO public."Admins" (id, code) VALUES (1, '12345Admin!');
+
+-- Schema for the e-commerce application
+
+-- Create Customer table
+CREATE TABLE public."Customers" (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    current_balance DECIMAL(10, 2) DEFAULT 0,
+    address VARCHAR(255)
+);
+
+-- Create CreditCard table
+CREATE TABLE public."CreditCards" (
+    id SERIAL PRIMARY KEY,
+    customer_id INT REFERENCES public."Customers"(id) ON DELETE CASCADE,
+    card_number VARCHAR(20) NOT NULL,
+    expiry_date DATE NOT NULL,
+    billing_address VARCHAR(255) NOT NULL
+);
+
+-- Create Address table
+CREATE TABLE public."Addresses" (
+    id SERIAL PRIMARY KEY,
+    customer_id INT REFERENCES public."Customers"(id) ON DELETE CASCADE,
+    address VARCHAR(255) NOT NULL
+);
+
+-- Create Product table
+CREATE TABLE public."Products" (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    category VARCHAR(255),
+    brand VARCHAR(255),
+    size VARCHAR(50),
+    description TEXT,
+    price DECIMAL(10, 2) NOT NULL,
+    image_url TEXT,
+    image_alt_text TEXT
+);
+
+-- Create Warehouse table
+CREATE TABLE public."Warehouses" (
+    id SERIAL PRIMARY KEY,
+    address VARCHAR(255) NOT NULL,
+    capacity INT NOT NULL,
+    control INT NOT NULL
+);
+
+-- Create Stock table
+CREATE TABLE public."Stocks" (
+    id SERIAL PRIMARY KEY,
+    product_id INT REFERENCES public."Products"(id) ON DELETE CASCADE,
+    warehouse_id INT REFERENCES public."Warehouses"(id) ON DELETE CASCADE,
+    quantity INT NOT NULL,
+    CONSTRAINT stock_unique UNIQUE (product_id, warehouse_id)
+);
+
+-- Create Cart table
+CREATE TABLE public."Carts" (
+    id SERIAL PRIMARY KEY,
+    customer_id INT REFERENCES public."Customers"(id) ON DELETE CASCADE,
+    product_id INT REFERENCES public."Products"(id) ON DELETE CASCADE,
+    quantity INT NOT NULL
+);
+
+-- Create Checkout table
+CREATE TABLE public."Checkouts" (
+    id SERIAL PRIMARY KEY,
+    customer_id INT REFERENCES public."Customers"(id) ON DELETE CASCADE,
+    total_amount DECIMAL(10, 2) NOT NULL
+);
+
+-- Create CheckoutItems table
+CREATE TABLE public."CheckoutItems" (
+    id SERIAL PRIMARY KEY,
+    checkout_id INT REFERENCES public."Checkouts"(id) ON DELETE CASCADE,
+    product_id INT REFERENCES public."Products"(id) ON DELETE CASCADE,
+    product_price DECIMAL(10, 2) NOT NULL,
+    quantity INT NOT NULL
+);
+
+-- Create Order table
+CREATE TABLE public."Orders" (
+    id SERIAL PRIMARY KEY,
+    customer_id INT REFERENCES public."Customers"(id) ON DELETE CASCADE,
+    order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status VARCHAR(50),
+    total_amount DECIMAL(10, 2) NOT NULL,
+    delivery_plan_id INT,
+    payment_method_id INT
+);
+
+-- Create OrderItems table
+CREATE TABLE public."OrderItems" (
+    id SERIAL PRIMARY KEY,
+    order_id INT REFERENCES public."Orders"(id) ON DELETE CASCADE,
+    product_id INT REFERENCES public."Products"(id) ON DELETE CASCADE,
+    quantity INT NOT NULL
+);
+
+-- Create DeliveryPlan table
+CREATE TABLE public."DeliveryPlans" (
+    id SERIAL PRIMARY KEY,
+    order_id INT REFERENCES public."Orders"(id) ON DELETE CASCADE,
+    delivery_type VARCHAR(50),
+    delivery_price DECIMAL(10, 2),
+    delivery_date DATE,
+    ship_date DATE
+);
+
+-- Create Staff table
+CREATE TABLE public."Staffs" (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    job_title VARCHAR(50),
+    salary DECIMAL(10, 2)
+);
+
+-- Insert initial data into Warehouses table
+INSERT INTO public."Warehouses" (id, address, capacity, control) VALUES 
+(1, '123 Street Ave!', 100, 1),
+(2, '234 Street Ave!', 200, 1),
+(3, '345 Street Ave!', 300, 1),
+(4, '456 Street Ave!', 400, 1),
+(5, '567 Street Ave!', 500, 1),
+(6, '678 Street Ave!', 600, 1),
+(7, '789 Street Ave!', 700, 1);
+
+-- Query to select all data from Warehouses table
+SELECT * FROM public."Warehouses";
+-- DELETE FROM public."Warehouses";

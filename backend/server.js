@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const sequelize = require('./config/database');
+const jwtAuth = require('./middleware/authMiddleware'); 
 
 const customerRoutes = require('./routes/customerRoutes');
 const productRoutes = require('./routes/productRoutes');
@@ -17,6 +18,9 @@ const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
+
+// Apply JWT middleware to all routes
+app.use(jwtAuth);
 
 app.use('/api/customers', customerRoutes);
 app.use('/api/products', productRoutes);

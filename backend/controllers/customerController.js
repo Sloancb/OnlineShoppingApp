@@ -3,10 +3,11 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 exports.register = async (req, res) => {
-    const { name, email, password } = req.body;
+    const { name, email, password, address} = req.body;
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
         const customer = await Customer.create({ name, email, password:hashedPassword });
+        const address1 = await Address.create({ customer_id: customer.id, address: address });
         return res.status(201).json(customer);
     } catch (error) {
         return res.status(500).json({ error: error.message });

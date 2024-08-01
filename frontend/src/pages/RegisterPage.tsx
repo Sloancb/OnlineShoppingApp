@@ -9,6 +9,7 @@ function RegisterPage() {
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
+    const [address, setAddress] = useState('');
 
     //staff Info
     const [job_title, setJob_title] = useState('');
@@ -20,7 +21,7 @@ function RegisterPage() {
     const handleRegister = ()=>{
         if(!isStaff){
             setLoading(true)
-            postCustomer({email, name, password})
+            postCustomer({email, name, password, address})
             .then((isRegistered)=>{
                 setLoading(false)
                 if(isRegistered)
@@ -84,11 +85,10 @@ function RegisterPage() {
                     <div className="Form">
                         {/* Add new input fields for the payment billing information */}
                         <TextField
-                            label="Other information?"
-                            type='password'
-                            value={password}
+                            label="Delivery Address"
+                            value={address}
                             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                                setPassword(event.target.value);
+                                setAddress(event.target.value);
                             }}
                         />
                     </div>
