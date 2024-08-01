@@ -7,6 +7,9 @@
         "products": "/api/products",
         "orders": "/api/orders",
         "staff": "/api/staff",
-        "carts": "/api/carts"
+        "carts": "/api/carts",
+        "checkout": "/api/checkout",
+        "warehouse": "/api/warehouse",
+        "stock": "/api/stock"
     }
 }

@@ -201,21 +201,20 @@ export async function handleAddToCart(product: Product, quantity: number) {
 export async function getCartItems(): Promise<cartItem[]> {
     let acc : cartItem[] = [];
     try {
-        const c_id = window.sessionStorage.getItem('id');     // customer id
-        if (c_id === null) {
+        let c_id = window.sessionStorage.getItem('id');     // customer id
+        if (!c_id) {
             sendMessage('error', "Account not logged in");
-        } else {
+        }
         const customerId = parseInt(c_id, 10);
         
-            await request<cartItem[]>(
-                `${config.endpoint.carts}/getItemsInfo/${customerId}`, 'GET'
-            ).then((response) => {
-                if (!response) {
-                    sendMessage('error', "No Cart Items");
-                }
-                acc = response;
-            })
-        }
+        await request<cartItem[]>(
+            `${config.endpoint.carts}/getItemsInfo/${customerId}`, 'GET'
+        ).then((response) => {
+            if (!response) {
+                sendMessage('error', "No Cart Items");
+            }
+            acc = response;
+        })
 
     } catch (error) {
         sendMessage('error', "Failed to retrieve cart");

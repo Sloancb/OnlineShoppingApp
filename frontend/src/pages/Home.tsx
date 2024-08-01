@@ -10,14 +10,17 @@ import ShoppingCartRounded from '@mui/icons-material/ShoppingCartRounded';
 
 
 
-
+function test(row, id){
+  console.log("test")
+  handleAddToCart(row, id)
+}
 const columns: GridColDef[] = [
-  { field: 'name', headerName: 'Name', width: 150, editable:true },
-  { field: 'category', headerName: 'Category', width: 150, editable:true },
-  { field: 'brand', headerName: 'Brand', width: 150, editable:true },
-  { field: 'size', headerName: 'Size', width: 150, editable:true },
-  { field: 'description', headerName: 'Description', width: 150, editable:true },
-  { field: 'price', headerName: 'Price', width: 150, editable:true },
+  { field: 'name', headerName: 'Name', width: 150, editable:false },
+  { field: 'category', headerName: 'Category', width: 150, editable:false },
+  { field: 'brand', headerName: 'Brand', width: 150, editable:false },
+  { field: 'size', headerName: 'Size', width: 150, editable:false },
+  { field: 'description', headerName: 'Description', width: 150, editable:false },
+  { field: 'price', headerName: 'Price', width: 150, editable:false },
   // quantity input 
   { field: 'quantity',
     headerName: 'Quantity',
@@ -38,8 +41,8 @@ const columns: GridColDef[] = [
     type: 'actions',
     width: 200,
     getActions: (params: GridRowParams<Product>) => {
-      const imageURL = `${process.env.PUBLIC_URL}/${params.row.image_url}`;
-      //const imageURL = `https://via.placeholder.com/50x50/000000/000000`;
+      //const imageURL = `${process.env.PUBLIC_URL}/${params.row.image_url}`;
+      const imageURL = `https://via.placeholder.com/50x50/000000/000000`;
         return [
           <>
           <img
@@ -50,7 +53,7 @@ const columns: GridColDef[] = [
       <Button 
         variant="text" 
         startIcon={<ShoppingCartRounded />} 
-        onClick={() => handleAddToCart(params.row, params.row.quantity || 1)}
+        onClick={() =>{test(params.row, params.row.quantity || 1)}}
       > Add to Cart
       </Button>
       </>
@@ -69,7 +72,9 @@ function Filter({ input }: SearchBar) {
     request<Product[]>(config.endpoint.products + '/', 'GET')
     .then((response) => {
       setData(response);              // update state with the fetched data
-    });
+    }).catch(()=>{
+    
+    })
   }, []);
 
   // ----- filter data
@@ -96,8 +101,6 @@ function Filter({ input }: SearchBar) {
           console.log("error", error);
           // setLoading(false);
       });
-      console.log(data)
-      console.log(updatedRow)
     };
 
   return (
