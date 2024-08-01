@@ -176,22 +176,23 @@ export async function handleAddToCart(product: Product, quantity: number) {
         if (!c_id) {
             sendMessage('error', "Account not logged in");
             return;
+        } else {
+            const current_customer_id = parseInt(c_id, 10);
+
+            const cart_item = {
+                product_id: product.id,
+                customer_id: current_customer_id,
+                quantity: quantity
+            };
+
+            // add to cart
+            await request<cartItem>(config.endpoint.carts +'/addToCart', 'POST', cart_item)
+            .then(()=>{
+                const event = new CustomEvent('updateCart', {bubbles:true})
+                window.dispatchEvent(event)
+                sendMessage('success', `Added ${quantity} ${product.name}(s) to cart!`)
+            }).catch()
         }
-        const current_customer_id = parseInt(c_id, 10);
-
-        const cart_item = {
-            product_id: product.id,
-            customer_id: current_customer_id,
-            quantity: quantity
-        };
-
-        // add to cart
-        await request<cartItem>(config.endpoint.carts +'/addToCart', 'POST', cart_item)
-        .then(()=>{
-            const event = new CustomEvent('updateCart', {bubbles:true})
-            window.dispatchEvent(event)
-            sendMessage('success', `Added ${quantity} ${product.name}(s) to cart!`)
-        }).catch()
     } catch (error) {
         sendMessage('error', "Failed to add item to cart");
         console.error('Error adding to cart: ', error);
@@ -202,20 +203,20 @@ export async function getCartItems(): Promise<cartItem[]> {
     let acc : cartItem[] = [];
     try {
         let c_id = window.sessionStorage.getItem('id');     // customer id
-        if (!c_id) {
+        if (c_id === null) {
             sendMessage('error', "Account not logged in");
+        } else {
+            const customerId = parseInt(c_id, 10);
+            
+            await request<cartItem[]>(
+                `${config.endpoint.carts}/getItemsInfo/${customerId}`, 'GET'
+            ).then((response) => {
+                if (!response) {
+                    sendMessage('error', "No Cart Items");
+                }
+                acc = response;
+            })
         }
-        const customerId = parseInt(c_id, 10);
-        
-        await request<cartItem[]>(
-            `${config.endpoint.carts}/getItemsInfo/${customerId}`, 'GET'
-        ).then((response) => {
-            if (!response) {
-                sendMessage('error', "No Cart Items");
-            }
-            acc = response;
-        })
-
     } catch (error) {
         sendMessage('error', "Failed to retrieve cart");
     }
@@ -228,21 +229,21 @@ export async function getCartTotalValue(): Promise<number> {
         let c_id = window.sessionStorage.getItem('id');     // customer id
         if (!c_id) {
             sendMessage('error', "Account not logged in");
+        } else {
+            const customerId = parseInt(c_id, 10);
+            
+            await request<cartItem[]>(
+                `${config.endpoint.carts}/getItemsInfo/${customerId}`, 'GET'
+            ).then((response) => {
+                if (!response) {
+                    sendMessage('error', "No Cart Items");
+                }
+                for (let cartItem in response){
+                    total_amount += response[cartItem].quantity * response[cartItem].price;
+                    console.log(total_amount);
+                }
+            })
         }
-        const customerId = parseInt(c_id, 10);
-        
-        await request<cartItem[]>(
-            `${config.endpoint.carts}/getItemsInfo/${customerId}`, 'GET'
-        ).then((response) => {
-            if (!response) {
-                sendMessage('error', "No Cart Items");
-            }
-            for (let cartItem in response){
-                total_amount += response[cartItem].quantity * response[cartItem].price;
-                console.log(total_amount);
-            }
-        })
-
     } catch (error) {
         sendMessage('error', "Failed to retrieve cart");
     }
@@ -254,18 +255,18 @@ export async function getCustomerDetails(){
         let c_id = window.sessionStorage.getItem('id');     // customer id
         if (!c_id) {
             sendMessage('error', "Account not logged in");
+        } else {
+            const customerId = parseInt(c_id, 10);
+            
+            await request(
+                `${config.endpoint.carts}/fetchByID/${customerId}`, 'GET'
+            ).then((response) => {
+                if (!response) {
+                    sendMessage('error', "Can't get info on credit cards and addresses");
+                }
+                acc = response;
+            })
         }
-        const customerId = parseInt(c_id, 10);
-        
-        await request(
-            `${config.endpoint.carts}/fetchByID/${customerId}`, 'GET'
-        ).then((response) => {
-            if (!response) {
-                sendMessage('error', "Can't get info on credit cards and addresses");
-            }
-            acc = response;
-        })
-
     } catch (error) {
         sendMessage('error', "Failed to retrieve customer info");
     }

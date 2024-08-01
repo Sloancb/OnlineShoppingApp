@@ -8,18 +8,17 @@ exports.createCartItem = async (req, res) => {
 
         res.status(201).json(cart);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: 'createCart failed' });
     }
 };
 
 
 // --- CREATE new cart item or update existing item for customer_id
 exports.addToCart = async (req, res) => {
-  //console.log('Add to Cart');
     const { customer_id, product_id, quantity } = req.body;
     try {
-            // check valid input
-            if (!customer_id || !product_id || !quantity || quantity <= 0) {
+        // check valid input
+        if (!customer_id || !product_id || !quantity || quantity <= 0) {
             return res.status(400).json({ error: 'Invalid input data' });
         }
 
@@ -36,7 +35,7 @@ exports.addToCart = async (req, res) => {
         }
     } catch (error) {
         console.error("Error adding to cart: ", error);
-        res.status(500).json({ error: 'Failed to add item to cart' });
+        res.status(500).json({ error: 'addToCart failed' });
     }
 };
 
@@ -51,7 +50,7 @@ exports.getCartItems = async (req, res) => {
         res.json(cartItems);
     } catch (error) {
         console.error("Error fetching cart items:", error);
-        res.status(500).json({ error: 'Failed to retrieve cart items' });
+        res.status(500).json({ error: 'getCartItems failed' });
     }
 };
 
@@ -70,7 +69,7 @@ exports.getCartItemsInfo = async (req, res) => {
         res.json(cartItemsInfo);
     } catch (error) {
         console.error("Error fetching cart items:", error);
-        res.status(500).json({ error: 'Failed to retrieve cart items' });
+        res.status(500).json({ error: 'getCartItemsInfo failed' });
     }
 };
 
@@ -89,7 +88,8 @@ exports.updateCartItem = async (req, res) => {
 
         res.json({ message: 'cart item updated' });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error("Error updating cart item:", error);
+        res.status(500).json({ error: 'updateCartItem failed' });
     }
 }
 
@@ -105,8 +105,8 @@ exports.deleteCartItem = async (req, res) => {
 
       res.json(cart_item);
   } catch (error) {
-      console.error("Error fetching cart items:", error);
-      res.status(500).json({ error: 'Failed to retrieve cart items' });
+      console.error("Error deleting cart items:", error);
+      res.status(500).json({ error: 'deleteCartItem failed' });
   }
 };
 
@@ -122,8 +122,8 @@ exports.emptyCart = async (req, res) => {
 
       res.json(cart_item);
   } catch (error) {
-      console.error("Error fetching cart items:", error);
-      res.status(500).json({ error: 'Failed to retrieve cart items' });
+      console.error("Error emptying cart:", error);
+      res.status(500).json({ error: 'emptyCart failed' });
   }
 };
 
@@ -134,7 +134,7 @@ exports.getCart = async (req, res) => {
       const carts = await Cart.findAll();
       res.json(carts);
   } catch (error) {
-      res.status(500).json({ error: error.message });
+      res.status(500).json({ error: 'getCart failed' });
   }
 };
 
