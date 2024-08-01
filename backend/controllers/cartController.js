@@ -54,7 +54,7 @@ exports.getCartItems = async (req, res) => {
     }
 };
 
-// --- GET cart items info for customer_id
+// --- GET cart items info for Product
 exports.getCartItemsInfo = async (req, res) => {
     const customerId = req.params.customer_id;
     try {
@@ -64,7 +64,7 @@ exports.getCartItemsInfo = async (req, res) => {
         let cartItemsInfo =[]
         for (let item of cartItems){
             const product = await Product.findOne({where : {id : item.product_id}})
-            cartItemsInfo.push({...item.dataValues, name:product.name, category:product.category, price:product.price})
+            cartItemsInfo.push({...item.dataValues, name:product.name, category:product.category, price:product.price, image_url:product.image_url})
         }
         res.json(cartItemsInfo);
     } catch (error) {

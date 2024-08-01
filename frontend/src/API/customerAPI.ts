@@ -135,7 +135,8 @@ export interface cartItem {
     quantity : number,
     name: string,
     category: string,
-    price: number
+    price: number,
+    image_url: string
 };
 
 export async function getCartItemCount(): Promise<number> {

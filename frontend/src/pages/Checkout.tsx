@@ -43,14 +43,16 @@ const columns: GridColDef[] = [
       type: 'actions',
       headerName: 'Image',
       width: 160,
-      getActions: (params: GridRowParams<Product>) => {
+      getActions: (params) => {
         const imageURL = `${process.env.PUBLIC_URL}/${params.row.image_url}`;
         //const imageURL = `https://via.placeholder.com/50x50/000000/000000`;     // black 50x50 px image
           return [
             <>
               <img
-                src={imageURL} // image from product database
-                alt={params.row.image_alt} // alt text from product database
+                src={imageURL}        // image from product database
+                alt={params.row.name}     // alt image text
+                // currently uses name as alt image text. to change that, 
+                // add image_alt into cartItem in customerAPI.ts and getCartItemsInfo in cartController.js
                 style={{ maxWidth: '50px', maxHeight: '50px', marginRight: '8px'}}
               />
             </>
@@ -58,6 +60,7 @@ const columns: GridColDef[] = [
       }
     },
     { field: 'Totals',
+      width: 160,
       renderCell: (params) => (
         <div 
           style={{ alignItems: 'center', paddingTop: '15px' }}> {/* center in cell */}

@@ -19,7 +19,7 @@ const columns: GridColDef[] = [
   { field: 'category', headerName: 'Category', width: 150, editable:false },
   { field: 'brand', headerName: 'Brand', width: 150, editable:false },
   { field: 'size', headerName: 'Size', width: 150, editable:false },
-  { field: 'description', headerName: 'Description', width: 150, editable:false },
+  { field: 'description', headerName: 'Description', width: 220, editable:false },
   { field: 'price', headerName: 'Price', width: 150, editable:false },
   // quantity input 
   { field: 'quantity',
