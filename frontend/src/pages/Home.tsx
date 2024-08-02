@@ -104,26 +104,26 @@ function Filter({ input }: SearchBar) {
     };
 
   return (
-      <div className="content">
-      <Box sx={{ padding:5, maxHeight: 10}}>
-      <DataGrid
-              rows={filteredData}
-              columns={columns}
-              autoHeight
-              initialState={{
-              pagination: {
-                  paginationModel: {
-                  pageSize: 10,
-                  },
-              },
-              }}
-              pageSizeOptions={[5]}
-              processRowUpdate={handleProcessRowUpdate}
-              checkboxSelection
-              disableRowSelectionOnClick
-          />
-        </Box>
-        </div>
+    <div className="content">
+    <Box sx={{ padding:5, maxHeight: 10}}>
+    <DataGrid
+            rows={filteredData}
+            columns={columns}
+            autoHeight
+            initialState={{
+            pagination: {
+                paginationModel: {
+                pageSize: 10,
+                },
+            },
+            }}
+            pageSizeOptions={[5]}
+            processRowUpdate={handleProcessRowUpdate}
+            checkboxSelection
+            disableRowSelectionOnClick
+        />
+      </Box>
+      </div>
   );
 }
 
