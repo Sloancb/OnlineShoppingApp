@@ -2,8 +2,8 @@
 DROP TABLE IF EXISTS public."OrderItems";
 DROP TABLE IF EXISTS public."Addresses";
 DROP TABLE IF EXISTS public."Carts";
-DROP TABLE IF EXISTS public."Checkouts";
 DROP TABLE IF EXISTS public."CheckoutItems";
+DROP TABLE IF EXISTS public."Checkouts";
 DROP TABLE IF EXISTS public."DeliveryPlans";
 DROP TABLE IF EXISTS public."CreditCards";
 DROP TABLE IF EXISTS public."Orders";
@@ -19,9 +19,6 @@ CREATE TABLE public."Admins" (
     id SERIAL PRIMARY KEY,
     code VARCHAR(255) NOT NULL UNIQUE
 );
-
-INSERT INTO public."Admins" (id, code) VALUES (1, '12345Admin!');
-
 -- Schema for the e-commerce application
 
 -- Create Customer table
@@ -60,15 +57,14 @@ CREATE TABLE public."Products" (
     description TEXT,
     price DECIMAL(10, 2) NOT NULL,
     image_url TEXT,
-    image_alt_text TEXT
+    image_alt TEXT
 );
 
 -- Create Warehouse table
 CREATE TABLE public."Warehouses" (
     id SERIAL PRIMARY KEY,
     address VARCHAR(255) NOT NULL,
-    capacity INT NOT NULL,
-    control INT NOT NULL
+    capacity INT NOT NULL
 );
 
 -- Create Stock table
@@ -142,17 +138,3 @@ CREATE TABLE public."Staffs" (
     job_title VARCHAR(50),
     salary DECIMAL(10, 2)
 );
-
--- Insert initial data into Warehouses table
-INSERT INTO public."Warehouses" (id, address, capacity, control) VALUES 
-(1, '123 Street Ave!', 100, 1),
-(2, '234 Street Ave!', 200, 1),
-(3, '345 Street Ave!', 300, 1),
-(4, '456 Street Ave!', 400, 1),
-(5, '567 Street Ave!', 500, 1),
-(6, '678 Street Ave!', 600, 1),
-(7, '789 Street Ave!', 700, 1);
-
--- Query to select all data from Warehouses table
-SELECT * FROM public."Warehouses";
--- DELETE FROM public."Warehouses";

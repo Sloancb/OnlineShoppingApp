@@ -8,6 +8,7 @@ import { DataGrid, GridColDef, GridRowParams } from '@mui/x-data-grid';
 import { EnsureLoggedIn, Product, SearchBar, QuantityInput, CreditCard, sendMessage, Paper, EnsureNotAdmin } from '../styling/components.tsx'
 import HomeBar from '../styling/components.tsx';
 import { useNavigate } from 'react-router-dom';
+import ShoppingCartRounded from '@mui/icons-material/ShoppingCartRounded';
 
 const columns: GridColDef[] = [
     { field: 'name', headerName: 'Name', width: 150, editable:true },

@@ -5,7 +5,6 @@ const jwt = require('jsonwebtoken');
 exports.fetchCode = async (req, res) => {
     try {
         const code = Admin.findAll()
-        console.log(code)
         if (code.length > 1){
             console.log("Error: Too many admin codes found. Contact Database Admin")
             res.status(500).json({error:"Too many admin codes found. Contact Database Admin"})

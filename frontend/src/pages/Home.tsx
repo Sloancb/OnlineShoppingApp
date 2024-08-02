@@ -18,7 +18,7 @@ const columns: GridColDef[] = [
   { field: 'name', headerName: 'Name', width: 150, editable:false },
   { field: 'category', headerName: 'Category', width: 150, editable:false },
   { field: 'brand', headerName: 'Brand', width: 150, editable:false },
-  { field: 'size', headerName: 'Size', width: 150, editable:false },
+  { field: 'size', headerName: 'Size', width: 80, editable:false },
   { field: 'description', headerName: 'Description', width: 220, editable:false },
   { field: 'price', headerName: 'Price', width: 150, editable:false },
   // quantity input 
@@ -50,12 +50,12 @@ const columns: GridColDef[] = [
               alt={params.row.image_alt} // alt text from product database
               style={{ maxWidth: '50px', maxHeight: '50px', marginRight: '8px'}}
           />
-      <Button 
-        variant="text" 
-        startIcon={<ShoppingCartRounded />} 
-        onClick={() =>{test(params.row, params.row.quantity || 1)}}
-      > Add to Cart
-      </Button>
+          <Button 
+            variant="text" 
+            startIcon={<ShoppingCartRounded />} 
+            onClick={() =>{test(params.row, params.row.quantity || 1)}}
+          > Add to Cart
+          </Button>
       </>
     ];
     }

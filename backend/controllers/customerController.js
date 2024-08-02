@@ -62,7 +62,7 @@ exports.fetchByName = async (req, res) => {
         }
         const address = await Address.findOne({ where: { customer_id: customer.id } });
         const creditCards = await CreditCard.findAll({ where: { customer_id: customer.id } });
-        console.log('credit Cards: ', creditCards);
+
         res.json({ customer, address, creditCards });
     } catch (error) {
         res.status(500).json({ error: error.message });

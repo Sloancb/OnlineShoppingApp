@@ -75,7 +75,6 @@ exports.getCartItemsInfo = async (req, res) => {
 
 // --- UPDATE cart item
 exports.updateCartItem = async (req, res) => {
-    console.log('Update Cart');
     const { customer_id, product_id, quantity } = req.body;
     try {
       const cart_item = await Cart.findOne({ where: { customer_id, product_id } });
