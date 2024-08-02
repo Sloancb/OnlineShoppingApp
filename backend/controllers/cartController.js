@@ -96,12 +96,14 @@ exports.updateCartItem = async (req, res) => {
 
 // --- DELETE cart item for customer_id
 exports.deleteCartItem = async (req, res) => {
-  try {
-      const cart_item = await Cart.findAll({ where: { customer_id, product_id } });
-      if (!cart_item) {
-          return res.status(404).json({ error: 'cart item not found' });
-      }
-      await Cart.destroy({ where: { customer_id, product_id } })
+   const { customer_id, product_id } = req.body;
+    try {
+        const cart_item = await Cart.findAll({ where: { customer_id, product_id } });
+        if (!cart_item) {
+            return res.status(404).json({ error: 'cart item not found' });
+        }
+        await Cart.destroy({ where: { customer_id, product_id } })
+
 
       res.json(cart_item);
   } catch (error) {
