@@ -198,6 +198,63 @@ export async function handleAddToCart(product: Product, quantity: number) {
     }
 };
 
+export async function handleUpdateCart(cartItem: cartItem, quantity: number) {
+    try {
+        console.log("ran 2")
+        let c_id = window.sessionStorage.getItem('id');     // customer id
+        if (!c_id) {
+            sendMessage('error', "Account not logged in");
+            return;
+        }
+        const current_customer_id = parseInt(c_id, 10);
+
+        const cart_item = {
+            product_id: cartItem.product_id,
+            customer_id: current_customer_id,
+            quantity: quantity
+        };
+
+        // add to cart
+        await request<cartItem>(config.endpoint.carts +'/update', 'POST', cart_item)
+        .then(()=>{
+            const event = new CustomEvent('updateCart', {bubbles:true})
+            window.dispatchEvent(event)
+            sendMessage('success', `Updated ${quantity} ${cartItem.name}(s) in cart!`)
+        }).catch()
+    } catch (error) {
+        sendMessage('error', "Failed to update cart");
+        console.error('Error updating cart: ', error);
+    }
+};
+
+export async function handleDeleteCartItem(cartItem: cartItem) {
+    try {
+        console.log("ran 2")
+        let c_id = window.sessionStorage.getItem('id');     // customer id
+        if (!c_id) {
+            sendMessage('error', "Account not logged in");
+            return;
+        }
+        const current_customer_id = parseInt(c_id, 10);
+
+        const cart_item = {
+            product_id: cartItem.product_id,
+            customer_id: current_customer_id,
+            //quantity: quantity
+        };
+
+        // add to cart
+        await request<cartItem>(config.endpoint.carts +'/deleteItem', 'DELETE', cart_item)
+        .then(()=>{
+            const event = new CustomEvent('updateCart', {bubbles:true})
+            window.dispatchEvent(event)
+            sendMessage('success', `Removed ${cartItem.name} in cart!`)
+        }).catch()
+    } catch (error) {
+        sendMessage('error', "Failed to update cart");
+        console.error('Error updating cart: ', error);
+    }
+};
 export async function getCartItems(): Promise<cartItem[]> {
     let acc : cartItem[] = [];
     try {

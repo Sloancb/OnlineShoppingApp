@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { request } from '../API/Requests.ts';
-import { handleAddToCart, cartItem, getCartItemCount, getCartItems, getCartTotalValue, fetchByName, createOrder} from '../API/customerAPI.ts';
+import { handleUpdateCart, handleDeleteCartItem, cartItem, getCartItemCount, getCartItems, getCartTotalValue, fetchByName, createOrder} from '../API/customerAPI.ts';
 import config from '../config.json';
 import { Box, TextField, Button, Container, Grid, Menu, FormControl, InputLabel, MenuItem, Select, Typography} from '@mui/material';                // UI component for layout
 import { Option } from '@mui/base/Option';
@@ -16,26 +16,27 @@ const columns: GridColDef[] = [
     { field: 'price', headerName: 'Price', width: 150, editable:true },
     // quantity input 
     { field: 'quantity',
-      headerName: 'Quantity',
+      headerName: 'Current Quantity',
       width: 120,
       renderCell: (params) => (
         <Typography>{params.row.quantity}</Typography>
       ),
     },
-    // { field: 'quantity',
-    //   headerName: 'Quantity',
-    //   width: 120,
-    //   renderCell: (params) => (
-    //     <QuantityInput
-    //       row={params.row}
-    //       onQuantityChange={(quantity) => {
-    //         params.api.updateRows([{ ...params.row, quantity }]); 
-    //         // store the updated quantity in the row itself
-    //         params.row.quantity = quantity;
-    //       }}
-    //     />
-    //   ),
-    // },
+     { field: 'updateQuantity',
+       headerName: 'Update Quantity',
+       width: 120,
+       renderCell: (params) => (
+         <QuantityInput
+           row={params.row}
+           onQuantityChange={(updateQuantity) => {
+             params.api.updateRows([{ ...params.row, updateQuantity }]); 
+             // store the updated quantity in the row itself
+             params.row.updateQuantity = updateQuantity;
+             params.row.Totals = params.row.quantity * params.row.price
+           }}
+         />
+       ),
+     },
     // add to cart button
     { field: 'prodImage',
       type: 'actions',
@@ -55,19 +56,37 @@ const columns: GridColDef[] = [
       ];
       }
     },
-    // { field: 'addToCart',
-    //   type: 'actions',
-    //   width: 120,
-    //   getActions: (params: GridRowParams<Product>) => {
-    //     return [
-    //     <Button 
-    //       variant="text" 
-    //       startIcon={<ShoppingCartRounded />} 
-    //       onClick={() => handleAddToCart(params.row, params.row.quantity || 1)}
-    //     > Edit Cart
-    //     </Button>];
-    //   }
-    // },
+     { field: 'updateCart',
+       type: 'actions',
+       width: 120,
+       getActions: (params) => {
+         return [
+         <Button 
+           variant="text" 
+           startIcon={<ShoppingCartRounded />} 
+           onClick={() => {
+            handleUpdateCart(params.row, params.row.updateQuantity);
+            params.row.quantity = params.row.updateQuantity;
+          }}
+         > Update Item
+         </Button>];
+       }
+     },
+     { field: 'deleteCart',
+      type: 'actions',
+      width: 120,
+      getActions: (params) => {
+        return [
+        <Button 
+          variant="text" 
+          startIcon={<ShoppingCartRounded />} 
+          onClick={() => {
+           handleDeleteCartItem(params.row);
+         }}
+        > Delete Item
+        </Button>];
+      }
+    },
     { field: 'Totals',
       renderCell: (params) => (
       <Typography>{params.row.quantity * params.row.price}</Typography>
