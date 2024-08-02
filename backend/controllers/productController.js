@@ -10,7 +10,7 @@ exports.createProduct = async (req, res) => {
             size, 
             description, 
             price,
-            image_url: '',
+            image_url: '',       // 'default.png' is a blank img
             image_alt: ''
         });
 

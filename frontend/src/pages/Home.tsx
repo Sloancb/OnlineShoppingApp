@@ -19,7 +19,7 @@ const columns: GridColDef[] = [
   { field: 'category', headerName: 'Category', width: 150, editable:false },
   { field: 'brand', headerName: 'Brand', width: 150, editable:false },
   { field: 'size', headerName: 'Size', width: 150, editable:false },
-  { field: 'description', headerName: 'Description', width: 150, editable:false },
+  { field: 'description', headerName: 'Description', width: 220, editable:false },
   { field: 'price', headerName: 'Price', width: 150, editable:false },
   // quantity input 
   { field: 'quantity',
@@ -41,8 +41,8 @@ const columns: GridColDef[] = [
     type: 'actions',
     width: 200,
     getActions: (params: GridRowParams<Product>) => {
-      //const imageURL = `${process.env.PUBLIC_URL}/${params.row.image_url}`;
-      const imageURL = `https://via.placeholder.com/50x50/000000/000000`;
+      const imageURL = `${process.env.PUBLIC_URL}/${params.row.image_url}`;
+      //const imageURL = `https://via.placeholder.com/50x50/000000/000000`;     // black 50x50 px image
         return [
           <>
           <img
@@ -104,26 +104,26 @@ function Filter({ input }: SearchBar) {
     };
 
   return (
-      <div className="content">
-      <Box sx={{ padding:5, maxHeight: 10}}>
-      <DataGrid
-              rows={filteredData}
-              columns={columns}
-              autoHeight
-              initialState={{
-              pagination: {
-                  paginationModel: {
-                  pageSize: 10,
-                  },
-              },
-              }}
-              pageSizeOptions={[5]}
-              processRowUpdate={handleProcessRowUpdate}
-              checkboxSelection
-              disableRowSelectionOnClick
-          />
-        </Box>
-        </div>
+    <div className="content">
+    <Box sx={{ padding:5, maxHeight: 10}}>
+    <DataGrid
+            rows={filteredData}
+            columns={columns}
+            autoHeight
+            initialState={{
+            pagination: {
+                paginationModel: {
+                pageSize: 10,
+                },
+            },
+            }}
+            pageSizeOptions={[5]}
+            processRowUpdate={handleProcessRowUpdate}
+            checkboxSelection
+            disableRowSelectionOnClick
+        />
+      </Box>
+      </div>
   );
 }
 

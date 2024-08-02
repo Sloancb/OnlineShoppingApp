@@ -7,7 +7,6 @@ import { Option } from '@mui/base/Option';
 import { DataGrid, GridColDef, GridRowParams } from '@mui/x-data-grid';
 import { EnsureLoggedIn, Product, SearchBar, QuantityInput, CreditCard, sendMessage, Paper, EnsureNotAdmin } from '../styling/components.tsx'
 import HomeBar from '../styling/components.tsx';
-import ShoppingCartRounded from '@mui/icons-material/ShoppingCartRounded';
 import { useNavigate } from 'react-router-dom';
 
 const columns: GridColDef[] = [
@@ -18,10 +17,14 @@ const columns: GridColDef[] = [
     { field: 'quantity',
       headerName: 'Current Quantity',
       width: 120,
+      editable: true
+      /*
       renderCell: (params) => (
         <Typography>{params.row.quantity}</Typography>
       ),
+      */
     },
+
      { field: 'updateQuantity',
        headerName: 'Update Quantity',
        width: 120,
@@ -37,25 +40,28 @@ const columns: GridColDef[] = [
          />
        ),
      },
-    // add to cart button
+    
     { field: 'prodImage',
       type: 'actions',
       headerName: 'Image',
       width: 160,
-      getActions: (params: GridRowParams<Product>) => {
-        //const imageURL = `${process.env.PUBLIC_URL}/${params.row.image_url}`;
-        const imageURL = `https://via.placeholder.com/50x50/000000/000000`;
+      getActions: (params) => {
+        const imageURL = `${process.env.PUBLIC_URL}/${params.row.image_url}`;
+        //const imageURL = `https://via.placeholder.com/50x50/000000/000000`;     // black 50x50 px image
           return [
             <>
-            <img
-                src={imageURL} // image from product database
-                alt={params.row.image_alt} // alt text from product database
+              <img
+                src={imageURL}        // image from product database
+                alt={params.row.name}     // alt image text
+                // currently uses name as alt image text. to change that, 
+                // add image_alt into cartItem in customerAPI.ts and getCartItemsInfo in cartController.js
                 style={{ maxWidth: '50px', maxHeight: '50px', marginRight: '8px'}}
-            />
-        </>
-      ];
+              />
+            </>
+          ];
       }
     },
+
      { field: 'updateCart',
        type: 'actions',
        width: 120,
@@ -88,9 +94,13 @@ const columns: GridColDef[] = [
       }
     },
     { field: 'Totals',
+      width: 160,
       renderCell: (params) => (
-      <Typography>{params.row.quantity * params.row.price}</Typography>
-      ),
+        <div 
+          style={{ alignItems: 'center', paddingTop: '15px' }}> {/* center in cell */}
+          <Typography>{params.row.quantity * params.row.price}</Typography>
+        </div>
+      )
     }
   ];
 
